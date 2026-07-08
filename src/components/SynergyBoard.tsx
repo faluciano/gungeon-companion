@@ -1,0 +1,118 @@
+"use client";
+
+import type { RunView, SynergyEvaluationView } from "@/lib/types";
+
+function SynergyRow({
+  synergy,
+  onOpenItem,
+}: {
+  synergy: SynergyEvaluationView;
+  onOpenItem: (id: string) => void;
+}) {
+  const active = synergy.status === "active";
+  return (
+    <li
+      className={`panel-inset p-4 ${active ? "border-l-2 border-l-teal" : "border-l-2 border-l-amber-deep"}`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="font-display text-base font-semibold text-ink">{synergy.name}</h3>
+        <span
+          className={`chip shrink-0 ${active ? "chip-active" : "chip-ready"}`}
+        >
+          {active ? "Active" : `Need 1 more`}
+        </span>
+      </div>
+      <p className="mt-1.5 text-xs leading-relaxed text-ink-dim">{synergy.effect}</p>
+
+      {active ? (
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {synergy.contributors.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => onOpenItem(c.id)}
+              className="border border-teal/40 bg-teal/10 px-2 py-0.5 text-[0.7rem] text-teal hover:border-teal"
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-2.5">
+          <p className="kicker mb-1 text-[0.6rem]">Add one of</p>
+          <div className="flex flex-wrap gap-1.5">
+            {synergy.needed.flatMap((g) =>
+              g.options.map((o) => (
+                <button
+                  key={o.id}
+                  onClick={() => onOpenItem(o.id)}
+                  className="border border-line bg-bg px-2 py-0.5 text-[0.7rem] text-ink-dim hover:border-amber-deep hover:text-ink"
+                >
+                  {o.name}
+                </button>
+              )),
+            )}
+          </div>
+        </div>
+      )}
+    </li>
+  );
+}
+
+export default function SynergyBoard({
+  run,
+  onOpenItem,
+}: {
+  run: RunView;
+  onOpenItem: (id: string) => void;
+}) {
+  const hasAny = run.active.length > 0 || run.nearly.length > 0;
+
+  return (
+    <section className="panel flex h-full flex-col overflow-hidden">
+      <div className="flex items-center justify-between border-b border-line-bright p-4">
+        <div>
+          <p className="kicker mb-1">Synergies</p>
+          <p className="font-display text-lg font-semibold text-ink">
+            <span className="text-teal">{run.active.length}</span> active ·{" "}
+            <span className="text-amber">{run.nearly.length}</span> within reach
+          </p>
+        </div>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        {!hasAny ? (
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-6 py-10 text-center">
+            <span className="text-3xl opacity-40">✧</span>
+            <p className="text-xs text-ink-faint">
+              No synergies yet. As you add items, active combos and near-misses
+              appear here automatically.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {run.active.length > 0 && (
+              <div>
+                <p className="kicker mb-3 text-teal">◈ Active now</p>
+                <ul className="space-y-3">
+                  {run.active.map((s) => (
+                    <SynergyRow key={s.id} synergy={s} onOpenItem={onOpenItem} />
+                  ))}
+                </ul>
+              </div>
+            )}
+            {run.nearly.length > 0 && (
+              <div>
+                <p className="kicker mb-3 text-amber">◇ One item away</p>
+                <ul className="space-y-3">
+                  {run.nearly.map((s) => (
+                    <SynergyRow key={s.id} synergy={s} onOpenItem={onOpenItem} />
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

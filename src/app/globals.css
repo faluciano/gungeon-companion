@@ -1,26 +1,190 @@
 @import "tailwindcss";
 
+/* -------------------------------------------------------------------------- */
+/*  Ammonomicon dossier theme                                                 */
+/* -------------------------------------------------------------------------- */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #100e0c;
+  --bg-raised: #191512;
+  --bg-panel: #1f1a16;
+  --ink: #ede4d3;
+  --ink-dim: #b3a690;
+  --ink-faint: #7c7161;
+  --line: #362d24;
+  --line-bright: #4a3d30;
+
+  --amber: #e8b24a;
+  --amber-deep: #b8842a;
+  --teal: #46d6c8;
+  --teal-deep: #1f9a8f;
+  --danger: #e05a3c;
+
+  --tier-d: #9a8b74;
+  --tier-c: #56b45f;
+  --tier-b: #3f8ee0;
+  --tier-a: #b061e0;
+  --tier-s: #ec7a37;
+  --tier-n: #6b7280;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-panel: var(--bg-panel);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-bright: var(--line-bright);
+  --color-amber: var(--amber);
+  --color-amber-deep: var(--amber-deep);
+  --color-teal: var(--teal);
+  --color-teal-deep: var(--teal-deep);
+  --color-danger: var(--danger);
+
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* -------------------------------- Textures -------------------------------- */
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(232, 178, 74, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(232, 178, 74, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.bg-vignette {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(232, 178, 74, 0.08), transparent 55%),
+    radial-gradient(100% 100% at 50% 100%, rgba(0, 0, 0, 0.7), transparent 60%);
+}
+
+.bg-noise {
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* --------------------------- Reusable components -------------------------- */
+
+.panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--line-bright);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 6px 6px 0 -1px rgba(0, 0, 0, 0.55);
+}
+
+.panel-inset {
+  background-color: var(--bg-raised);
+  border: 1px solid var(--line);
+}
+
+.kicker {
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 0.68rem;
+  color: var(--ink-faint);
+}
+
+.hard-shadow { box-shadow: 4px 4px 0 -1px rgba(0, 0, 0, 0.6); }
+
+.btn {
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  border: 1px solid var(--line-bright);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease, color 0.12s ease;
+}
+.btn:active { transform: translate(2px, 2px); }
+
+.btn-primary {
+  background-color: var(--amber);
+  color: #1a1206;
+  border-color: var(--amber);
+  box-shadow: 3px 3px 0 -1px rgba(0, 0, 0, 0.65);
+}
+.btn-primary:hover { background-color: #f4c568; }
+
+.btn-ghost { background-color: transparent; color: var(--ink-dim); }
+.btn-ghost:hover {
+  color: var(--ink);
+  border-color: var(--amber-deep);
+  background-color: rgba(232, 178, 74, 0.06);
+}
+
+.tier {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 3px;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: 1px solid currentColor;
+  box-shadow: inset 0 0 12px -6px currentColor;
+}
+.tier-d { color: var(--tier-d); background: color-mix(in srgb, var(--tier-d) 12%, transparent); }
+.tier-c { color: var(--tier-c); background: color-mix(in srgb, var(--tier-c) 14%, transparent); }
+.tier-b { color: var(--tier-b); background: color-mix(in srgb, var(--tier-b) 14%, transparent); }
+.tier-a { color: var(--tier-a); background: color-mix(in srgb, var(--tier-a) 16%, transparent); }
+.tier-s { color: var(--tier-s); background: color-mix(in srgb, var(--tier-s) 18%, transparent); }
+.tier-n { color: var(--tier-n); background: color-mix(in srgb, var(--tier-n) 14%, transparent); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.12rem 0.5rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+}
+.chip-active { color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent); }
+.chip-ready { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
+.chip-potential { color: var(--ink-faint); }
+
+input:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--line-bright) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line-bright); border: 2px solid var(--bg); }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.4s ease both; }
+
+@keyframes pulse-teal {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(70, 214, 200, 0); }
+  50% { box-shadow: 0 0 0 3px rgba(70, 214, 200, 0.18); }
+}
+.pulse-teal { animation: pulse-teal 2.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .pulse-teal { animation: none; }
 }
