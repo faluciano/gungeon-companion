@@ -16,6 +16,7 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [detailRefresh, setDetailRefresh] = useState(0);
+  const [mobileTab, setMobileTab] = useState<"loadout" | "search" | "synergies">("search");
 
   const searchSeq = useRef(0);
   const lastArgs = useRef({ query: "", typeFilter: "" });
@@ -101,10 +102,46 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
 
   const ownedSet = new Set(run.items.map((i) => i.id));
 
+  const panelHeight =
+    "h-[calc(100dvh-11.5rem)] min-h-[24rem] lg:h-[calc(100vh-9rem)] lg:min-h-[26rem] lg:sticky lg:top-24";
+
+  const tabs: { id: typeof mobileTab; label: string; badge: number | null }[] = [
+    { id: "loadout", label: "Loadout", badge: run.counts.items },
+    { id: "search", label: "Search", badge: null },
+    { id: "synergies", label: "Synergies", badge: run.active.length },
+  ];
+
   return (
     <>
+      {/* Mobile tab switcher — desktop shows all three panels side by side. */}
+      <div className="sticky top-16 z-20 -mx-5 mb-4 border-b border-line-bright bg-bg/90 px-5 py-2 backdrop-blur-md lg:hidden">
+        <div className="grid grid-cols-3 gap-1.5">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setMobileTab(t.id)}
+              aria-pressed={mobileTab === t.id}
+              className={`btn flex items-center justify-center gap-1.5 px-2 py-2 text-xs ${
+                mobileTab === t.id ? "btn-primary" : "btn-ghost"
+              }`}
+            >
+              {t.label}
+              {t.badge != null && t.badge > 0 && (
+                <span
+                  className={`inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[0.6rem] font-bold leading-4 ${
+                    mobileTab === t.id ? "bg-bg/25 text-bg" : "bg-amber/20 text-amber"
+                  }`}
+                >
+                  {t.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_minmax(0,1.15fr)]">
-        <div className="h-[calc(100vh-9rem)] min-h-[26rem] lg:sticky lg:top-24">
+        <div className={`${mobileTab === "loadout" ? "block" : "hidden"} lg:block ${panelHeight}`}>
           <Loadout
             run={run}
             pendingIds={pendingIds}
@@ -113,7 +150,7 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
             onReset={resetRun}
           />
         </div>
-        <div className="h-[calc(100vh-9rem)] min-h-[26rem] lg:sticky lg:top-24">
+        <div className={`${mobileTab === "search" ? "block" : "hidden"} lg:block ${panelHeight}`}>
           <SearchPanel
             query={query}
             typeFilter={typeFilter}
@@ -127,7 +164,7 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
             onToggle={toggleItem}
           />
         </div>
-        <div className="h-[calc(100vh-9rem)] min-h-[26rem] lg:sticky lg:top-24">
+        <div className={`${mobileTab === "synergies" ? "block" : "hidden"} lg:block ${panelHeight}`}>
           <SynergyBoard run={run} onOpenItem={setSelectedId} />
         </div>
       </div>
