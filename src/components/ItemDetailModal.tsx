@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { ItemDetail } from "@/lib/types";
 import { statusChipClass, statusLabel, typeGlyph, typeLabel } from "@/lib/ui";
 import TierBadge from "./TierBadge";
+import ItemIcon from "./ItemIcon";
 
 export default function ItemDetailModal({
   itemId,
@@ -58,13 +59,24 @@ export default function ItemDetailModal({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="flex items-start justify-between gap-4 border-b border-line-bright p-5">
-          <div className="min-w-0">
-            <p className="kicker mb-1">
-              {typeGlyph((item?.type ?? "gun") as never)} {item ? typeLabel(item.type) : "Loading"}
-            </p>
-            <h2 className="truncate font-display text-2xl font-semibold text-ink">
-              {item?.name ?? "…"}
-            </h2>
+          <div className="flex min-w-0 items-center gap-4">
+            {item && (
+              <ItemIcon
+                name={item.name}
+                imageUrl={item.imageUrl}
+                quality={item.quality}
+                size={64}
+              />
+            )}
+            <div className="min-w-0">
+              <p className="kicker mb-1">
+                {typeGlyph((item?.type ?? "gun") as never)}{" "}
+                {item ? typeLabel(item.type) : "Loading"}
+              </p>
+              <h2 className="truncate font-display text-2xl font-semibold text-ink">
+                {item?.name ?? "…"}
+              </h2>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {item && <TierBadge quality={item.quality} />}

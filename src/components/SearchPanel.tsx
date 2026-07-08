@@ -2,7 +2,7 @@
 
 import type { SearchResult } from "@/lib/types";
 import { typeGlyph } from "@/lib/ui";
-import TierBadge from "./TierBadge";
+import ItemIcon from "./ItemIcon";
 
 const TYPE_FILTERS: { value: string; label: string }[] = [
   { value: "", label: "All" },
@@ -81,7 +81,7 @@ export default function SearchPanel({
                 className="group flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-bg-raised"
                 onClick={() => onOpen(r.id)}
               >
-                <TierBadge quality={r.quality} />
+                <ItemIcon name={r.name} imageUrl={r.imageUrl} quality={r.quality} size={44} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate font-display text-sm font-semibold text-ink">

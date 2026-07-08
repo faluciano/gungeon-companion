@@ -17,6 +17,7 @@ type Dataset = {
     quality: "D" | "C" | "B" | "A" | "S" | "N";
     description: string;
     quote: string | null;
+    imageUrl: string | null;
   }>;
   synergies: Array<{
     id: string;
@@ -46,7 +47,17 @@ async function main() {
 
   // Items.
   for (const batch of chunk(data.items, 200)) {
-    await db.insert(schema.item).values(batch);
+    await db.insert(schema.item).values(
+      batch.map((i) => ({
+        id: i.id,
+        name: i.name,
+        type: i.type,
+        quality: i.quality,
+        description: i.description,
+        quote: i.quote,
+        imageUrl: i.imageUrl ?? null,
+      })),
+    );
   }
 
   // Synergies + components.

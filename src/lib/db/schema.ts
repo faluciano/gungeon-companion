@@ -98,6 +98,8 @@ export const item = pgTable(
     description: text("description").notNull(),
     // In-game flavour text ("blurb"), shown as a stylised quote.
     quote: text("quote"),
+    // Ammonomicon icon URL (hotlinked from the community wiki CDN).
+    imageUrl: text("image_url"),
   },
   (t) => [index("item_name_idx").on(t.name)],
 );

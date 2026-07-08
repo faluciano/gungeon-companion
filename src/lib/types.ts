@@ -7,6 +7,7 @@ export type SearchResult = {
   quality: Quality;
   description: string;
   quote: string | null;
+  imageUrl: string | null;
   owned: boolean;
   synergyCount: number;
   activatesCount: number;
@@ -40,6 +41,7 @@ export type RunView = {
     quality: Quality;
     description: string;
     quote: string | null;
+    imageUrl: string | null;
   }[];
   active: SynergyEvaluationView[];
   nearly: SynergyEvaluationView[];
@@ -69,6 +71,7 @@ export type ItemDetail = {
     quality: Quality;
     description: string;
     quote: string | null;
+    imageUrl: string | null;
     owned: boolean;
   };
   synergies: ItemDetailSynergy[];

@@ -59,6 +59,7 @@ export async function GET(
       quality: item.quality,
       description: item.description,
       quote: item.quote,
+      imageUrl: item.imageUrl,
       owned: ownedIds.has(item.id),
     },
     synergies,

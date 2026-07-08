@@ -55,6 +55,7 @@ export async function GET(request: Request) {
       quality: it.quality,
       description: it.description,
       quote: it.quote,
+      imageUrl: it.imageUrl,
       owned: ownedIds.has(it.id),
       synergyCount: reports.length,
       // How many synergies would activate if this item were added to the run.

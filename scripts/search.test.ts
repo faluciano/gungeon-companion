@@ -9,6 +9,7 @@ function item(partial: Partial<GameItem> & { id: string; name: string }): GameIt
     quality: "C",
     description: "",
     quote: null,
+    imageUrl: null,
     ...partial,
   };
 }

@@ -9,7 +9,7 @@ import {
 import type { GameItem, ResolvedSynergy } from "../src/lib/game-data";
 
 function it(id: string, name = id): GameItem {
-  return { id, name, type: "gun", quality: "C", description: "", quote: null };
+  return { id, name, type: "gun", quality: "C", description: "", quote: null, imageUrl: null };
 }
 
 const scope = it("scope", "Scope");

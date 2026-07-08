@@ -8,6 +8,7 @@ export type GameItem = {
   quality: "D" | "C" | "B" | "A" | "S" | "N";
   description: string;
   quote: string | null;
+  imageUrl: string | null;
 };
 
 export type SynergyGroup = {
