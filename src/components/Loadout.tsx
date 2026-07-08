@@ -3,6 +3,7 @@
 import type { RunView } from "@/lib/types";
 import { typeGlyph } from "@/lib/ui";
 import ItemIcon from "./ItemIcon";
+import TierTag from "./TierTag";
 
 export default function Loadout({
   run,
@@ -62,9 +63,12 @@ export default function Loadout({
               >
                 <ItemIcon name={it.name} imageUrl={it.imageUrl} quality={it.quality} size={40} />
                 <div className="min-w-0 flex-1">
-                  <span className="truncate font-display text-sm font-semibold text-ink">
-                    {it.name}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate font-display text-sm font-semibold text-ink">
+                      {it.name}
+                    </span>
+                    <TierTag quality={it.quality} />
+                  </div>
                   <p className="line-clamp-1 text-[0.7rem] text-ink-faint">{it.description}</p>
                 </div>
                 <button

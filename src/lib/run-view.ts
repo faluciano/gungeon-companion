@@ -22,9 +22,12 @@ export type SynergyEvaluationView = {
   status: SynergyEvaluation["status"];
   satisfiedGroups: number;
   requiredGroups: number;
-  contributors: { id: string; name: string }[];
+  contributors: { id: string; name: string; quality: GameItem["quality"]; imageUrl: string | null }[];
   // Items that would complete the synergy (only for `nearly`).
-  needed: { groupIndex: number; options: { id: string; name: string }[] }[];
+  needed: {
+    groupIndex: number;
+    options: { id: string; name: string; quality: GameItem["quality"]; imageUrl: string | null }[];
+  }[];
 };
 
 function toView(e: SynergyEvaluation): SynergyEvaluationView {
@@ -35,10 +38,20 @@ function toView(e: SynergyEvaluation): SynergyEvaluationView {
     status: e.status,
     satisfiedGroups: e.satisfiedGroups,
     requiredGroups: e.synergy.requiredGroups,
-    contributors: e.ownedContributors.map((i) => ({ id: i.id, name: i.name })),
+    contributors: e.ownedContributors.map((i) => ({
+      id: i.id,
+      name: i.name,
+      quality: i.quality,
+      imageUrl: i.imageUrl,
+    })),
     needed: e.missingGroups.map((g) => ({
       groupIndex: g.index,
-      options: g.items.map((i) => ({ id: i.id, name: i.name })),
+      options: g.items.map((i) => ({
+        id: i.id,
+        name: i.name,
+        quality: i.quality,
+        imageUrl: i.imageUrl,
+      })),
     })),
   };
 }

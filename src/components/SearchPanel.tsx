@@ -3,6 +3,7 @@
 import type { SearchResult } from "@/lib/types";
 import { typeGlyph } from "@/lib/ui";
 import ItemIcon from "./ItemIcon";
+import TierTag from "./TierTag";
 
 const TYPE_FILTERS: { value: string; label: string }[] = [
   { value: "", label: "All" },
@@ -87,6 +88,7 @@ export default function SearchPanel({
                     <span className="truncate font-display text-sm font-semibold text-ink">
                       {r.name}
                     </span>
+                    <TierTag quality={r.quality} />
                     <span className="shrink-0 text-[0.7rem] text-ink-faint">
                       {typeGlyph(r.type)}
                     </span>

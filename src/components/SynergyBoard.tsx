@@ -1,6 +1,7 @@
 "use client";
 
 import type { RunView, SynergyEvaluationView } from "@/lib/types";
+import ItemIcon from "./ItemIcon";
 
 function SynergyRow({
   synergy,
@@ -30,8 +31,9 @@ function SynergyRow({
             <button
               key={c.id}
               onClick={() => onOpenItem(c.id)}
-              className="border border-teal/40 bg-teal/10 px-2 py-0.5 text-[0.7rem] text-teal hover:border-teal"
+              className="flex items-center gap-1.5 border border-teal/40 bg-teal/10 py-0.5 pl-0.5 pr-2 text-[0.7rem] text-teal hover:border-teal"
             >
+              <ItemIcon name={c.name} imageUrl={c.imageUrl} quality={c.quality} size={20} />
               {c.name}
             </button>
           ))}
@@ -45,8 +47,9 @@ function SynergyRow({
                 <button
                   key={o.id}
                   onClick={() => onOpenItem(o.id)}
-                  className="border border-line bg-bg px-2 py-0.5 text-[0.7rem] text-ink-dim hover:border-amber-deep hover:text-ink"
+                  className="flex items-center gap-1.5 border border-line bg-bg py-0.5 pl-0.5 pr-2 text-[0.7rem] text-ink-dim hover:border-amber-deep hover:text-ink"
                 >
+                  <ItemIcon name={o.name} imageUrl={o.imageUrl} quality={o.quality} size={20} />
                   {o.name}
                 </button>
               )),

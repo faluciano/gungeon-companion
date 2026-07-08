@@ -27,8 +27,11 @@ export type SynergyEvaluationView = {
   status: SynergyStatus;
   satisfiedGroups: number;
   requiredGroups: number;
-  contributors: { id: string; name: string }[];
-  needed: { groupIndex: number; options: { id: string; name: string }[] }[];
+  contributors: { id: string; name: string; quality: Quality; imageUrl: string | null }[];
+  needed: {
+    groupIndex: number;
+    options: { id: string; name: string; quality: Quality; imageUrl: string | null }[];
+  }[];
 };
 
 export type RunView = {
