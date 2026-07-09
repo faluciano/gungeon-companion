@@ -1,5 +1,4 @@
-import { db } from "@/lib/db";
-import { item, synergy, synergyComponent } from "@/lib/db/schema";
+import dataset from "@/lib/data/dataset.json";
 
 export type GameItem = {
   id: string;
@@ -33,37 +32,37 @@ export type GameData = {
   synergiesByItem: Map<string, ResolvedSynergy[]>;
 };
 
-// Game data is static (seeded reference tables), so load it once per runtime.
+// Static reference dataset shipped with the app (no DB round-trip needed).
+type DatasetSynergyComponent = { itemId: string; groupIndex: number };
+type DatasetSynergy = {
+  id: string;
+  name: string;
+  effect: string;
+  requiredGroups: number;
+  components: DatasetSynergyComponent[];
+};
+type Dataset = { items: GameItem[]; synergies: DatasetSynergy[] };
+
+// Game data is static reference data, so build it once per runtime.
 const globalForData = globalThis as unknown as { gameData?: Promise<GameData> };
 
-async function load(): Promise<GameData> {
-  const [items, synergies, components] = await Promise.all([
-    db.select().from(item),
-    db.select().from(synergy),
-    db.select().from(synergyComponent),
-  ]);
+function build(): GameData {
+  const { items, synergies } = dataset as unknown as Dataset;
 
-  const itemsById = new Map(items.map((i) => [i.id, i as GameItem]));
-
-  const groupsBySynergy = new Map<string, Map<number, GameItem[]>>();
-  for (const c of components) {
-    const it = itemsById.get(c.itemId);
-    if (!it) continue;
-    let groups = groupsBySynergy.get(c.synergyId);
-    if (!groups) {
-      groups = new Map();
-      groupsBySynergy.set(c.synergyId, groups);
-    }
-    const arr = groups.get(c.groupIndex) ?? [];
-    arr.push(it);
-    groups.set(c.groupIndex, arr);
-  }
+  const itemsById = new Map(items.map((i) => [i.id, i]));
 
   const resolved: ResolvedSynergy[] = synergies.map((s) => {
-    const groupMap = groupsBySynergy.get(s.id) ?? new Map<number, GameItem[]>();
+    const groupMap = new Map<number, GameItem[]>();
+    for (const c of s.components) {
+      const it = itemsById.get(c.itemId);
+      if (!it) continue;
+      const arr = groupMap.get(c.groupIndex) ?? [];
+      arr.push(it);
+      groupMap.set(c.groupIndex, arr);
+    }
     const groups: SynergyGroup[] = [...groupMap.entries()]
       .sort((a, b) => a[0] - b[0])
-      .map(([index, items]) => ({ index, items }));
+      .map(([index, groupItems]) => ({ index, items: groupItems }));
     return {
       id: s.id,
       name: s.name,
@@ -84,17 +83,12 @@ async function load(): Promise<GameData> {
     }
   }
 
-  return {
-    items: items as GameItem[],
-    itemsById,
-    synergies: resolved,
-    synergiesByItem,
-  };
+  return { items, itemsById, synergies: resolved, synergiesByItem };
 }
 
 export function getGameData(): Promise<GameData> {
   if (!globalForData.gameData) {
-    globalForData.gameData = load();
+    globalForData.gameData = Promise.resolve(build());
   }
   return globalForData.gameData;
 }

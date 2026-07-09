@@ -70,7 +70,6 @@ function ShrineCard({ shrine }: { shrine: Shrine }) {
 }
 
 export default function ShrineBoard() {
-  const [query, setQuery] = useState("");
   const [tag, setTag] = useState("");
 
   const allTags = useMemo(
@@ -78,21 +77,10 @@ export default function ShrineBoard() {
     [],
   );
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return SHRINES.filter((s) => {
-      if (tag && !s.tags.includes(tag)) return false;
-      if (!q) return true;
-      return (
-        s.name.toLowerCase().includes(q) ||
-        s.effect.toLowerCase().includes(q) ||
-        s.flavor.toLowerCase().includes(q) ||
-        s.give.toLowerCase().includes(q) ||
-        s.gain.toLowerCase().includes(q) ||
-        s.tags.some((t) => t.toLowerCase().includes(q))
-      );
-    });
-  }, [query, tag]);
+  const filtered = useMemo(
+    () => (tag ? SHRINES.filter((s) => s.tags.includes(tag)) : SHRINES),
+    [tag],
+  );
 
   return (
     <div className="space-y-5">
@@ -103,20 +91,7 @@ export default function ShrineBoard() {
           usually for a price. A green lantern by a door hints one waits inside.
           Browse what each one does before you strike a bargain.
         </p>
-        <div className="relative mt-4">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-amber">
-            ⌕
-          </span>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search shrines…"
-            autoComplete="off"
-            spellCheck={false}
-            className="w-full border border-line-bright bg-bg-raised py-2.5 pl-9 pr-3 text-sm text-ink placeholder:text-ink-faint focus:outline-none"
-          />
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={() => setTag("")}
             className={`btn px-3 py-1 text-xs ${tag === "" ? "btn-primary" : "btn-ghost"}`}
@@ -137,7 +112,7 @@ export default function ShrineBoard() {
 
       {filtered.length === 0 ? (
         <p className="panel px-6 py-10 text-center text-sm text-ink-faint">
-          No shrines match that search.
+          No shrines match that filter.
         </p>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
