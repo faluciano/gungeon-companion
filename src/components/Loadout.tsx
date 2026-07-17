@@ -11,12 +11,16 @@ export default function Loadout({
   onOpen,
   onRemove,
   onReset,
+  expanded,
+  onToggleExpanded,
 }: {
   run: RunView;
   pendingIds: Set<string>;
   onOpen: (id: string) => void;
   onRemove: (id: string) => void;
   onReset: () => void;
+  expanded: boolean;
+  onToggleExpanded: () => void;
 }) {
   const { counts } = run;
   return (
@@ -28,14 +32,24 @@ export default function Loadout({
             {counts.items} item{counts.items === 1 ? "" : "s"}
           </p>
         </div>
-        <button
-          className="btn btn-ghost px-3 py-1.5 text-xs"
-          onClick={onReset}
-          disabled={counts.items === 0}
-          title="Clear all items from this run"
-        >
-          Reset run
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className="btn btn-ghost hidden px-3 py-1.5 text-xs lg:block"
+            onClick={onToggleExpanded}
+            aria-label={expanded ? "Exit full screen loadout" : "Open full screen loadout"}
+            title={expanded ? "Exit full screen" : "Open full screen"}
+          >
+            {expanded ? "↙ Collapse" : "↗ Expand"}
+          </button>
+          <button
+            className="btn btn-ghost px-3 py-1.5 text-xs"
+            onClick={onReset}
+            disabled={counts.items === 0}
+            title="Clear all items from this run"
+          >
+            Reset run
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-3 border-b border-line px-4 py-2 text-[0.7rem] text-ink-faint">

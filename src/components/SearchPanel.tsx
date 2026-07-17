@@ -23,6 +23,8 @@ export default function SearchPanel({
   onTypeChange,
   onOpen,
   onToggle,
+  expanded,
+  onToggleExpanded,
 }: {
   query: string;
   typeFilter: string;
@@ -34,11 +36,23 @@ export default function SearchPanel({
   onTypeChange: (t: string) => void;
   onOpen: (id: string) => void;
   onToggle: (id: string, owned: boolean) => void;
+  expanded: boolean;
+  onToggleExpanded: () => void;
 }) {
   return (
     <section className="panel flex h-full flex-col overflow-hidden">
       <div className="border-b border-line-bright p-4">
-        <p className="kicker mb-2">Ammonomicon // Search</p>
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <p className="kicker">Ammonomicon // Search</p>
+          <button
+            className="btn btn-ghost hidden px-3 py-1.5 text-xs lg:block"
+            onClick={onToggleExpanded}
+            aria-label={expanded ? "Exit full screen search" : "Open full screen search"}
+            title={expanded ? "Exit full screen" : "Open full screen"}
+          >
+            {expanded ? "↙ Collapse" : "↗ Expand"}
+          </button>
+        </div>
         <div className="relative">
           <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-amber">
             ⌕
