@@ -17,6 +17,7 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [detailRefresh, setDetailRefresh] = useState(0);
   const [mobileTab, setMobileTab] = useState<"loadout" | "search" | "synergies">("search");
+  const [expandedPanel, setExpandedPanel] = useState<typeof mobileTab | null>(null);
 
   const searchSeq = useRef(0);
   const lastArgs = useRef({ query: "", typeFilter: "" });
@@ -47,6 +48,15 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
     const handle = setTimeout(() => runSearch(query, typeFilter), 180);
     return () => clearTimeout(handle);
   }, [query, typeFilter, runSearch]);
+
+  useEffect(() => {
+    if (!expandedPanel) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExpandedPanel(null);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [expandedPanel]);
 
   const refreshRun = useCallback(async () => {
     const res = await fetch("/api/run");
@@ -104,6 +114,16 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
 
   const panelHeight =
     "h-[calc(100dvh-11.5rem)] min-h-[24rem] lg:h-[calc(100vh-9rem)] lg:min-h-[26rem] lg:sticky lg:top-24";
+  const panelClass = (panel: typeof mobileTab) => {
+    const mobileVisibility = mobileTab === panel ? "block" : "hidden";
+    if (expandedPanel === panel) {
+      return `${mobileVisibility} lg:fixed lg:inset-x-5 lg:bottom-5 lg:top-20 lg:z-40 lg:block lg:h-auto lg:min-h-0`;
+    }
+    if (expandedPanel) return `${mobileVisibility} lg:hidden`;
+    return `${mobileVisibility} lg:block ${panelHeight}`;
+  };
+  const toggleExpanded = (panel: typeof mobileTab) =>
+    setExpandedPanel((current) => (current === panel ? null : panel));
 
   const tabs: { id: typeof mobileTab; label: string; badge: number | null }[] = [
     { id: "loadout", label: "Loadout", badge: run.counts.items },
@@ -141,16 +161,18 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
       </div>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_minmax(0,1.15fr)]">
-        <div className={`${mobileTab === "loadout" ? "block" : "hidden"} lg:block ${panelHeight}`}>
+        <div className={panelClass("loadout")}>
           <Loadout
             run={run}
             pendingIds={pendingIds}
             onOpen={setSelectedId}
             onRemove={(id) => toggleItem(id, true)}
             onReset={resetRun}
+            expanded={expandedPanel === "loadout"}
+            onToggleExpanded={() => toggleExpanded("loadout")}
           />
         </div>
-        <div className={`${mobileTab === "search" ? "block" : "hidden"} lg:block ${panelHeight}`}>
+        <div className={panelClass("search")}>
           <SearchPanel
             query={query}
             typeFilter={typeFilter}
@@ -162,10 +184,17 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
             onTypeChange={setTypeFilter}
             onOpen={setSelectedId}
             onToggle={toggleItem}
+            expanded={expandedPanel === "search"}
+            onToggleExpanded={() => toggleExpanded("search")}
           />
         </div>
-        <div className={`${mobileTab === "synergies" ? "block" : "hidden"} lg:block ${panelHeight}`}>
-          <SynergyBoard run={run} onOpenItem={setSelectedId} />
+        <div className={panelClass("synergies")}>
+          <SynergyBoard
+            run={run}
+            onOpenItem={setSelectedId}
+            expanded={expandedPanel === "synergies"}
+            onToggleExpanded={() => toggleExpanded("synergies")}
+          />
         </div>
       </div>
 
