@@ -117,7 +117,7 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
   const panelClass = (panel: typeof mobileTab) => {
     const mobileVisibility = mobileTab === panel ? "block" : "hidden";
     if (expandedPanel === panel) {
-      return `${mobileVisibility} lg:fixed lg:inset-x-5 lg:bottom-5 lg:top-20 lg:z-40 lg:block lg:h-auto lg:min-h-0`;
+      return `${mobileVisibility} lg:fixed lg:inset-0 lg:z-40 lg:block lg:h-auto lg:min-h-0`;
     }
     if (expandedPanel) return `${mobileVisibility} lg:hidden`;
     return `${mobileVisibility} lg:block ${panelHeight}`;

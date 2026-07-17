@@ -146,11 +146,17 @@ export default function SynergyBoard({
             <p className="text-xs text-ink-faint">No synergies match that search.</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className={expanded ? "space-y-8" : "space-y-6"}>
             {active.length > 0 && (
               <div>
                 <p className="kicker mb-3 text-teal">◈ Active now</p>
-                <ul className="space-y-3">
+                <ul
+                  className={
+                    expanded
+                      ? "grid items-start gap-3 lg:grid-cols-2 xl:grid-cols-3"
+                      : "space-y-3"
+                  }
+                >
                   {active.map((s) => (
                     <SynergyRow key={s.id} synergy={s} onOpenItem={onOpenItem} />
                   ))}
@@ -160,7 +166,13 @@ export default function SynergyBoard({
             {nearly.length > 0 && (
               <div>
                 <p className="kicker mb-3 text-amber">◇ One item away</p>
-                <ul className="space-y-3">
+                <ul
+                  className={
+                    expanded
+                      ? "grid items-start gap-3 lg:grid-cols-2 xl:grid-cols-3"
+                      : "space-y-3"
+                  }
+                >
                   {nearly.map((s) => (
                     <SynergyRow key={s.id} synergy={s} onOpenItem={onOpenItem} />
                   ))}
