@@ -3533,7 +3533,7 @@
       "name": "Coin Crown",
       "type": "passive",
       "quality": "C",
-      "description": "Increases the chance to find  shells upon completing rooms.",
+      "description": "Increases the chance to find shells upon completing rooms.",
       "quote": "Play Well, Get Money",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/9/9f/Coin_Crown.png/revision/latest"
     },
@@ -4307,7 +4307,7 @@
       "name": "Gold Junk",
       "type": "passive",
       "quality": "N",
-      "description": "Grants 500  on pickup.",
+      "description": "Grants 500 money on pickup.",
       "quote": "One Man's Trash",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/c/c2/Gold_Junk.png/revision/latest"
     },
@@ -4433,7 +4433,7 @@
       "name": "Briefcase of Cash",
       "type": "passive",
       "quality": "A",
-      "description": "Grants 250  and 3 .",
+      "description": "Grants 250 money and 3 keys.",
       "quote": "Avarice",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/4/45/Briefcase_of_Cash.png/revision/latest"
     },
@@ -7030,7 +7030,7 @@
     {
       "id": "gilded-tables",
       "name": "Gilded Tables",
-      "effect": "Tables have a 15% chance to be golden. Flipping a golden table will cause all normal enemies in the room to drop 2 to 6 extra  upon death. Golden tables will not automatically flip due to Table Tech Money.",
+      "effect": "Tables have a 15% chance to be golden. Flipping a golden table will cause all normal enemies in the room to drop 2 to 6 extra money upon death. Golden tables will not automatically flip due to Table Tech Money.",
       "requiredGroups": 2,
       "components": [
         {
@@ -7094,7 +7094,7 @@
     {
       "id": "greener-guon-stone",
       "name": "Greener Guon Stone",
-      "effect": "Chance for the Green Guon Stone to heal upon taking damage is raised to 70% if that damage would have killed the player. 20  also appears whenever Green Guon Stone heals the player.",
+      "effect": "Chance for the Green Guon Stone to heal upon taking damage is raised to 70% if that damage would have killed the player. 20 money also appears whenever Green Guon Stone heals the player.",
       "requiredGroups": 2,
       "components": [
         {
@@ -8354,7 +8354,7 @@
     {
       "id": "king-bomber",
       "name": "King Bomber",
-      "effect": "Lil' Bomber's bombs become gold and spawn  every time they hit an enemy.",
+      "effect": "Lil' Bomber's bombs become gold and spawn money every time they hit an enemy.",
       "requiredGroups": 2,
       "components": [
         {
@@ -9570,7 +9570,7 @@
     {
       "id": "porkulent",
       "name": "Porkulent",
-      "effect": "Allows the player to make purchases without losing the  Ring.",
+      "effect": "Allows the player to make purchases without losing the Ring of Miserly Protection.",
       "requiredGroups": 2,
       "components": [
         {

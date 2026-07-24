@@ -15,6 +15,42 @@ OUT = os.path.join(HERE, "..", "src", "lib", "data", "dataset.json")
 
 VALID_QUALITY = {"D", "C", "B", "A", "S"}
 
+# The datamined source strips inline wiki sprites (money/casings, item icons)
+# from effect/description text, leaving blank gaps (a double space). Restore the
+# missing word so the text reads correctly instead of rendering a blank. Keyed
+# by the raw string as it appears in synergies.v3.json / items.csv.
+SPRITE_FIXUPS = {
+    # Item descriptions (items.csv effect column)
+    "Increases the chance to find  shells upon completing rooms.":
+        "Increases the chance to find shells upon completing rooms.",
+    "Grants 500  on pickup.": "Grants 500 money on pickup.",
+    "Grants 250  and 3 .": "Grants 250 money and 3 keys.",
+    # Synergy effects (synergies.v3.json)
+    "Lil' Bomber's bombs become gold and spawn  every time they hit an enemy.":
+        "Lil' Bomber's bombs become gold and spawn money every time they hit an enemy.",
+    "Tables have a 15% chance to be golden. Flipping a golden table will cause "
+    "all normal enemies in the room to drop 2 to 6 extra  upon death. Golden "
+    "tables will not automatically flip due to Table Tech Money.":
+        "Tables have a 15% chance to be golden. Flipping a golden table will cause "
+        "all normal enemies in the room to drop 2 to 6 extra money upon death. "
+        "Golden tables will not automatically flip due to Table Tech Money.",
+    "Chance for the Green Guon Stone to heal upon taking damage is raised to 70% "
+    "if that damage would have killed the player. 20  also appears whenever Green "
+    "Guon Stone heals the player.":
+        "Chance for the Green Guon Stone to heal upon taking damage is raised to 70% "
+        "if that damage would have killed the player. 20 money also appears whenever "
+        "Green Guon Stone heals the player.",
+    "Allows the player to make purchases without losing the  Ring.":
+        "Allows the player to make purchases without losing the Ring of Miserly Protection.",
+}
+
+
+def fix_sprites(text: str | None) -> str | None:
+    """Restore words for wiki sprites stripped from the datamined source."""
+    if text is None:
+        return None
+    return SPRITE_FIXUPS.get(text, text)
+
 
 def slugify(name: str) -> str:
     s = name.lower()
@@ -46,6 +82,7 @@ def main() -> None:
 
     def add_item(name, type_, qual, description, quote):
         name = name.strip()
+        description = fix_sprites(description)
         iid = slugify(name)
         if iid in items:
             # Keep the first occurrence; prefer a non-empty description if the
@@ -168,7 +205,7 @@ def main() -> None:
             {
                 "id": slugify(name),
                 "name": name,
-                "effect": s["effect"],
+                "effect": fix_sprites(s["effect"]),
                 "requiredGroups": required_groups,
                 "components": components,
             }
