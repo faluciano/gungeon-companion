@@ -3875,7 +3875,7 @@
       "name": "Lament Configurum",
       "type": "active",
       "quality": "B",
-      "description": "Upon use, spawns several enemies and has a chance to spawn a gun or item. Increases curse by 1 while held.",
+      "description": "Upon use, spawns 3 to 5 enemies. On the 2nd, 5th, 9th, 14th, 20th (and so on) use it opens to spawn a B, A, or S quality gun or item, with a 25% chance to instead damage the player — starting at one heart and rising by half a heart each time. Spawned guns and items increase curse by 1 when picked up, and it increases curse by 1 while held.",
       "quote": "Shellraiser",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/e/e8/Lament_Configurum.png/revision/latest"
     },

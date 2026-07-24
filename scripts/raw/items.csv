@@ -198,7 +198,7 @@ Jetpack|Active|To Fly|C|Can be toggled. While active, the player has increased m
 Wax Wings|Passive|Too Close To The Gun|B|Grants flight.
 Cat Bullet King Throne|Passive|A Cat Throne|B|Shoots miniature bullets upon rolling and grants flight.
 Blast Helmet|Passive|Duck And Cover|D|Decreases the radius that explosions will hurt the player in. Grants immunity to contact damage.
-Lament Configurum|Active|Shellraiser|B|Upon use, spawns several enemies and has a chance to spawn a gun or item. Increases curse by 1 while held.
+Lament Configurum|Active|Shellraiser|B|Upon use, spawns 3 to 5 enemies. On the 2nd, 5th, 9th, 14th, 20th (and so on) use it opens to spawn a B, A, or S quality gun or item, with a 25% chance to instead damage the player — starting at one heart and rising by half a heart each time. Spawned guns and items increase curse by 1 when picked up, and it increases curse by 1 while held.
 Monster Blood|Passive|Twist To Open|C|Taking damage spawns a pool of poison creep. Grants immunity to poison creep and a heart container.
 Nanomachines|Passive|Son|B|Grants two pieces of armor upon pickup. Grants a piece of armor every 4 times damage is taken.
 Seven-Leaf Clover|Passive|Lucky!|S|Increases the quality of&#160;chests&#160;found in chest rooms to an equal chance of red or black.
