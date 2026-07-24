@@ -2,17 +2,17 @@ name|notes|quote|tier|type|dps|magazine size|ammo capacity|damage|fire rate|relo
 Casey|Charged swings reflect nearby bullets. Does not crack secret walls. Increases curse by 2.|Batting .50|D|Charged|50.0|1||100|0.20|1.0||2.5|120||SILLY
 Pea Shooter|Fires peas.|Baby's First Gun|D|Semiautomatic|10.6|6|1000|4|0.15|1.5|20|20|3|10|SHITTY
 38 Special|Fires faster right after a dodge roll.|For The Inquisitive|D|Semiautomatic|26.5|6|350|5|0.07|0.78|23|35|10|5|SHITTY
-Derringer||One Last Trick|D|Semiautomatic|15.2|2|200|10|0.07|1.2|23|60|30|6|SHITTY
-Trank Gun||Non Non Lethal|C|Semiautomatic|47.6|12|200|6.5|0.15|1.2|23|60|30|6|PISTOL
+Derringer|A tiny semiautomatic pocket pistol with a 2-round magazine; it fires slowly but unleashes rapid shots right after a dodge roll.|One Last Trick|D|Semiautomatic|15.2|2|200|10|0.07|1.2|23|60|30|6|SHITTY
+Trank Gun|A semiautomatic pistol that fires tranquilizer darts, though on its own they have no special effect.|Non Non Lethal|C|Semiautomatic|47.6|12|200|6.5|0.15|1.2|23|60|30|6|PISTOL
 Unfinished Gun|Fires piercing bullets.|Still Warm|D|Semiautomatic|20.9|15|350|6|0.20|1.5|15|35|6|15|FIRE
 Elimentaler|Encases enemies in cheese, freezing them. Enemies that die while cheesed spawn a large cheese pool, which cheeses any enemies that step in it.|Full of Holes|S|Semiautomatic|29.0|15||Cheese ball: 5.5\nPointy cheese: 8\nCheese wheel: 15|0.22|1.2|23|1000|9|0|PISTOL
 Bullet|Fires rotating guns which fire bullets as they travel.|Fires Guns|C|Semiautomatic|21.0|6|250|Gun: 7Bullet: 4|0.2|1.0|||||PISTOL
 Shell|Fires three shotguns, each of which fires three bullets upon hitting something.|Fires Shotguns|B|Semiautomatic|36.9|6|150|Shotguns: 3x8Bullets: 2x4|0.5|1.4|||||SHOTGUN
 Hyper Light Blaster|Has very low ammo, but regenerates 1 ammo if a shot hits an enemy.|Skill Honed Sharp|B|Semiautomatic|85.1|12|12|20|0.15|1.5|26|20|6||PISTOL
 Boxing Glove|Shoots a boxing glove with a chance to stun. Gains a star each time it kills an enemy, up to 3. When at 3 stars, can be charged to consume the stars and fire a high-damage super punch. Increases curse by 1.|Pistol Hondo|C|Charged|30.0|350|350|Regular: 12Super: 200|0.40|1.5||3.5|||CHARGE
-Makarov||The People's Gun|D|Semiautomatic|16.6|7|350|5|0.15|1.2|23|60|10|4|SHITTY
-M1911||Classic|C|Semiautomatic|26.0|7|200|8|0.15|1.2|23|60|30|6|PISTOL
-Magnum||5 Shots Or 6?|B|Semiautomatic|44.6|6|140|13|0.15|1.0|23|60|30|7|PISTOL
+Makarov|A basic semiautomatic pistol with modest performance.|The People's Gun|D|Semiautomatic|16.6|7|350|5|0.15|1.2|23|60|10|4|SHITTY
+M1911|A classic semiautomatic pistol.|Classic|C|Semiautomatic|26.0|7|200|8|0.15|1.2|23|60|30|6|PISTOL
+Magnum|A six-round revolver that deals solid damage at a high fire rate with strong knockback.|5 Shots Or 6?|B|Semiautomatic|44.6|6|140|13|0.15|1.0|23|60|30|7|PISTOL
 Colt 1851|Fires a burst of two bullets.|You Dig|C|Burst|28.2|12|350|6|0.21|1.5|25|1000|10|8|PISTOL
 SAA|Fires bouncing bullets that aim towards enemies after bouncing.|Exhilarating Reload Time|B|Semiautomatic|43.6|6|200|Direct: 8\nBounce: 12|0.12|0.6|25|1000|14|0|PISTOL
 Cold 45|Fires bullets that freeze enemies.|Shatterday Night Special|B|Semiautomatic|25.3|12|350|6|0.15|1.2|28|35|10|6|ICE
@@ -32,11 +32,11 @@ Smiley's Revolver|Decreases shop prices while held. Fire rate increased shortly 
 Shades's Revolver|Increases coolness by 3.|Someone Loses An Eye|C|Semiautomatic|30.0|6|150|15|0.30|1.5|23|60|30|6|PISTOL
 Knight's Gun|Fires five bullets in an arrow shape. Gains some pickups when reloading an empty clip.|Plowshare|A|Semiautomatic|64.9|6|180|40 (8x5)|0.4|1.7|23|10|20||SILLY
 GuNNER|Taking damage while GuNNER is held drains 40 ammo and drops a skull that heals the player upon pickup.|Backpack Not Included|B|Semiautomatic|27.5|12|200|13.5|0.4|1.5|27|1000|9|0|RIFLE
-Regular Shotgun||Cocked And Loaded|D|Semiautomatic|32.0|8|150|24 (4x6)|0.60|1.8|23|15|30|10|SHOTGUN
+Regular Shotgun|Fires a spread of shotgun pellets, best used at close range.|Cocked And Loaded|D|Semiautomatic|32.0|8|150|24 (4x6)|0.60|1.8|23|15|30|10|SHOTGUN
 Big Shotgun|Fires three exploding shots that burst into bullets. Reloading next to Shotgun Kin sucks them up, killing them and restoring 1 ammo.|A Shotgun That's Big|A|Semiautomatic|63.1|4|70|Large: 45 (15x3)Small: 5.5|0.6|2.1||1000|||EXPLOSIVE
 Old Goldie|Increases coolness by 1.|For The Discerning|A|Semiautomatic|88.1|4|150|35 (3.5x10)|0.50|1.2|23|10|30|5|SHOTGUN
 Sawed-Off|Starting gun of The Convict.|No Butts About It|D|Semiautomatic|25.9|6|150|16 (4x4)|0.50|1.2|23|8|30|8|SHOTGUN
-Winchester||Better Than A Box Of Roses|C|Semiautomatic|36.9|8|100|24 (4x6)|0.60|1.7|23|15|30|7|SHOTGUN
+Winchester|A modified one-handed shotgun that fires a spread of pellets.|Better Than A Box Of Roses|C|Semiautomatic|36.9|8|100|24 (4x6)|0.60|1.7|23|15|30|7|SHOTGUN
 Rattler|Simultaneously fires a shotgun blast and a beam that has a chance to poison enemies.|Snakes On A Gun|B|Semiautomatic|35.6|8|200|21 (3x7)|0.20|1.2|23|20|30|0|POISON
 Bubble Blaster|Fires bubbles which move slowly towards enemies. Reloading the gun launches bubbles away from the player at high speed.|The Suds|C|Automatic|105.3|100|500|12|0.12|1.4||15|10|12|SILLY
 Elephant Gun|Fires a cone spread of bullets with high knockback.|Shoots Elephants|C|Semiautomatic|31.4|2|120|33 (5.5x6)|0.60|1.5|23|15|30|0|SHOTGUN
@@ -65,9 +65,9 @@ Triple Crossbow|Reloading alternates between triple bolts and single bolts that 
 Crescent Crossbow|Fires stars that split into smaller bouncing stars.|Moon Shot|A|Charged|19.5+|12|100|Large: 22\nMedium: 8\nSmall: 3|0.20|1.5|32|1000|20|0|CHARM
 Gunbow|Fires a fast, piercing projectile that ricochets many times.|Failed Experiment|A|Charged|12.4-55.7|1|60|35|0.001|1.0|26|1000|25|0|CHARGE
 Klobbe|Rapidly fires low-damage bullets.|Everyone's Favorite|D|Automatic|11.9|32|900|1.2|0.04|2.0|14|1000|1|20|FULLAUTO
-Machine Pistol||Rapid Fire|D|Automatic|29.7|30|600|3.2|0.07|1.2|23|16|6|10|FULLAUTO
-Thompson Sub-Machinegun||Myeah, See!|C|Automatic|40.8|30|350|5|0.10|0.78|23|1000|9|10|FULLAUTO
-AK-47||Accept No Substitutes|B|Automatic|44.7|30|500|5.5|0.11|0.6|23|1000|9|4|FULLAUTO
+Machine Pistol|A rapid-fire automatic pistol with heavy spread and poor accuracy.|Rapid Fire|D|Automatic|29.7|30|600|3.2|0.07|1.2|23|16|6|10|FULLAUTO
+Thompson Sub-Machinegun|A full-automatic submachine gun.|Myeah, See!|C|Automatic|40.8|30|350|5|0.10|0.78|23|1000|9|10|FULLAUTO
+AK-47|A reliable full-automatic assault rifle with balanced damage and ammo economy.|Accept No Substitutes|B|Automatic|44.7|30|500|5.5|0.11|0.6|23|1000|9|4|FULLAUTO
 Strafe Gun|Fires nails that explode upon releasing the trigger.|Bleeding Edge Gameplay|S|Automatic|46.5|20|400|Impact: 1 Explosion: 8|0.13|1.4|500||||FULLAUTO
 AKEY-47|Opening a locked chest or door with the gun equipped opens it for free. Alternatively, shooting a locked chest or door unlocks it.|Unlocked And Loaded!|S|Automatic|44.7|30|500|5.5|0.11|0.6|23|1000|9|4|SILLY
 Stone Dome|Sits on the player's head and rapidly fires homing bullets. While held, inflicts fear on nearby enemies. Increases curse by 1.|Big Head Mode|B|Automatic|26.5|750|750|4.5|0.20|2.0|25|1000|10|8|FULLAUTO
@@ -84,7 +84,7 @@ Triple Gun|Changes form based on how much ammo it has left.|Bullet the Stampede|
 Heck Blaster|Rapidly fires invisible bullets. Jammed enemies hit will revert to normal.|Whoa, Nelly|B|Automatic|31.4|999|999|2.5|0.05|0.3|40|14|3|8|FULLAUTO
 Patriot|Fires piercing bullets. Fire rate increases rapidly as the trigger is held.|Gun Eater|S|Automatic|69.0|100|500|7|0.30|1.0|30|1000|15|1|FULLAUTO
 AC-15|Becomes more powerful if the player has armor.|Metalled Gear|B|Automatic|25.8/27.9|40|300|Unarmored: 3.8Armored: 15|Unarmored: 0.125\nArmored: 0.5|1.8|30 (Unarmored)\n50 (Armored)|1000 (Unarmored)\n25 (Armored)|8 (Unarmored)\n50 (Armored)|10 (Unarmored)\n1 (Armored)|SILLY
-Vulcan Cannon||Boundless Slaughter|S|Automatic|100.0|900|900|5|0.05|0.6|35|1000|15|12|FULLAUTO
+Vulcan Cannon|An automatic minigun that unleashes a continuous, very high rate of fire.|Boundless Slaughter|S|Automatic|100.0|900|900|5|0.05|0.6|35|1000|15|12|FULLAUTO
 Plague Pistol|Bullets create poison puddles on impact.|Chemical Warfare|D|Semiautomatic|16.8|12|200|4|0.15|1.2|20|25|13|5|POISON
 Gungine|Greatly increases movement speed while held. Reloading clears nearby goop and refills the gun's ammo.|12 Cylinder|S|Automatic|80.6|100|800|5|0.05|1.14|35|1000|15|6|FULLAUTO
 The Predator|Locks onto enemies and fires high speed homing lasers.  Invisibility while reloading an empty magazine.|High-tech $#!*|B|Semiautomatic|29.4|8|150|25|0.80|1.2|72|32|10|5|PISTOL
@@ -92,11 +92,11 @@ Dragunfire|Rapidly fires burning bullets that have a chance to inflict Burn.|Roa
 Sniper Rifle|Fires bullets that can pierce through one enemy.|Scope Creep|C|Semiautomatic|24.8|10|80|26|1.00|1.5|200|1000|15|1|RIFLE
 A.W.P.|Fires bullets that can pierce through one enemy.|Noob Cannon|A|Semiautomatic|30.5|8|50|40|1.20|2.1|100|1000|25|5|RIFLE
 M1|Fires high-speed piercing bullets.|Bolt Action|C|Semiautomatic|22.6|6|100|20|0.80|1.3|200|60|25|2|RIFLE
-Winchester Rifle||Guns And Deviltry.|D|Semiautomatic|19.7|12|130|15|0.72|1.2|32|1000|9|5|RIFLE
+Winchester Rifle|A semiautomatic lever-action rifle; its fire rate does not benefit from tapping, so it plays like a full-auto.|Guns And Deviltry.|D|Semiautomatic|19.7|12|130|15|0.72|1.2|32|1000|9|5|RIFLE
 Corsair|Fires slow, bouncing bullets that accelerate and curve towards enemies.|Plot A Course|C|Charged|12.5|1|200|10|0|0.5|26|1000|25|5|CHARGE
 Railgun|Fires a fast-moving piercing bullet that bounces many times.|Calibrating|S|Charged|27.0-243.2|1|40|50||0.6|250|1000|50|0|CHARGE
 Prototype Railgun|Fires a fast-moving piercing bullet.|DANGER: HIGH VOLTAGE|A|Charged|51.0|1|40|150||0.6|800|1000|0|0|CHARGE
-Void Marshal||Acquired Under The Table|B|Semiautomatic|51.9|15|250|9|0.10|1.2|35|35|10|7|PISTOL
+Void Marshal|A semiautomatic pistol that fires fast-moving laser projectiles.|Acquired Under The Table|B|Semiautomatic|51.9|15|250|9|0.10|1.2|35|35|10|7|PISTOL
 Deck4rd|Fires a single powerful bullet that will explode upon impact.|Unicorn Of Handguns|A|Semiautomatic|47.1|2|40|5 (impact) + 35 (explosion)|0.20|1.5|20|1000|22|10|EXPLOSIVE
 The Judge|The final shot of each clip has a chance to poison, freeze or ignite enemies. (likely more effects possible)|Hot Shot|B|Semiautomatic|32.5|9|400|7.5|0.15|1.0|30|1000|9|7|PISTOL
 Mourning Star|Calls down a controllable orbital laser.|Satellite Rain|S|Beam|110.0|800|800|~110/s|0.3||||||SILLY

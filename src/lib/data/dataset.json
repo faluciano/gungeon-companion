@@ -32,7 +32,7 @@
       "name": "Derringer",
       "type": "gun",
       "quality": "D",
-      "description": "Derringer.",
+      "description": "A tiny semiautomatic pocket pistol with a 2-round magazine; it fires slowly but unleashes rapid shots right after a dodge roll.",
       "quote": "One Last Trick",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/0/01/Derringer.png/revision/latest"
     },
@@ -41,7 +41,7 @@
       "name": "Trank Gun",
       "type": "gun",
       "quality": "C",
-      "description": "Trank Gun.",
+      "description": "A semiautomatic pistol that fires tranquilizer darts, though on its own they have no special effect.",
       "quote": "Non Non Lethal",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/a/af/Trank_Gun.png/revision/latest"
     },
@@ -104,7 +104,7 @@
       "name": "Makarov",
       "type": "gun",
       "quality": "D",
-      "description": "Makarov.",
+      "description": "A basic semiautomatic pistol with modest performance.",
       "quote": "The People's Gun",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/4/4c/Makarov.png/revision/latest"
     },
@@ -113,7 +113,7 @@
       "name": "M1911",
       "type": "gun",
       "quality": "C",
-      "description": "M1911.",
+      "description": "A classic semiautomatic pistol.",
       "quote": "Classic",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/b/b2/M1911.png/revision/latest"
     },
@@ -122,7 +122,7 @@
       "name": "Magnum",
       "type": "gun",
       "quality": "B",
-      "description": "Magnum.",
+      "description": "A six-round revolver that deals solid damage at a high fire rate with strong knockback.",
       "quote": "5 Shots Or 6?",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/9/90/Magnum.png/revision/latest"
     },
@@ -302,7 +302,7 @@
       "name": "Regular Shotgun",
       "type": "gun",
       "quality": "D",
-      "description": "Regular Shotgun.",
+      "description": "Fires a spread of shotgun pellets, best used at close range.",
       "quote": "Cocked And Loaded",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/c/c6/Regular_Shotgun.png/revision/latest"
     },
@@ -338,7 +338,7 @@
       "name": "Winchester",
       "type": "gun",
       "quality": "C",
-      "description": "Winchester.",
+      "description": "A modified one-handed shotgun that fires a spread of pellets.",
       "quote": "Better Than A Box Of Roses",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/e/e6/Winchester.png/revision/latest"
     },
@@ -599,7 +599,7 @@
       "name": "Machine Pistol",
       "type": "gun",
       "quality": "D",
-      "description": "Machine Pistol.",
+      "description": "A rapid-fire automatic pistol with heavy spread and poor accuracy.",
       "quote": "Rapid Fire",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/6/63/Machine_Pistol.png/revision/latest"
     },
@@ -608,7 +608,7 @@
       "name": "Thompson Sub-Machinegun",
       "type": "gun",
       "quality": "C",
-      "description": "Thompson Sub-Machinegun.",
+      "description": "A full-automatic submachine gun.",
       "quote": "Myeah, See!",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/6/62/Thompson_Sub-Machinegun.png/revision/latest"
     },
@@ -617,7 +617,7 @@
       "name": "AK-47",
       "type": "gun",
       "quality": "B",
-      "description": "AK-47.",
+      "description": "A reliable full-automatic assault rifle with balanced damage and ammo economy.",
       "quote": "Accept No Substitutes",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/f/f8/AK-47.png/revision/latest"
     },
@@ -770,7 +770,7 @@
       "name": "Vulcan Cannon",
       "type": "gun",
       "quality": "S",
-      "description": "Vulcan Cannon.",
+      "description": "An automatic minigun that unleashes a continuous, very high rate of fire.",
       "quote": "Boundless Slaughter",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/c/cf/Vulcan_Cannon.png/revision/latest"
     },
@@ -842,7 +842,7 @@
       "name": "Winchester Rifle",
       "type": "gun",
       "quality": "D",
-      "description": "Winchester Rifle.",
+      "description": "A semiautomatic lever-action rifle; its fire rate does not benefit from tapping, so it plays like a full-auto.",
       "quote": "Guns And Deviltry.",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/8/80/Winchester_Rifle.png/revision/latest"
     },
@@ -878,7 +878,7 @@
       "name": "Void Marshal",
       "type": "gun",
       "quality": "B",
-      "description": "Void Marshal.",
+      "description": "A semiautomatic pistol that fires fast-moving laser projectiles.",
       "quote": "Acquired Under The Table",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/8/84/Void_Marshal.png/revision/latest"
     },
