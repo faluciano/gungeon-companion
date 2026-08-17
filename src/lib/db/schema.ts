@@ -3,6 +3,7 @@ import {
   text,
   boolean,
   integer,
+  bigint,
   timestamp,
   primaryKey,
   index,
@@ -77,6 +78,19 @@ export const passkey = pgTable("passkey", {
   transports: text("transports"),
   aaguid: text("aaguid"),
   createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Shared by better-auth's `storage: "database"` rate limiter (model name
+// "rateLimit") and the per-user limiter in src/lib/rate-limit.ts. The `key`
+// primary key makes concurrent first-inserts conflict instead of duplicating.
+export const rateLimit = pgTable("rate_limit", {
+  // better-auth's adapter requires an `id` field on every model.
+  id: text("id").primaryKey(),
+  // Unique so concurrent first-inserts for a bucket conflict instead of
+  // duplicating.
+  key: text("key").notNull().unique(),
+  count: integer("count").notNull(),
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
 });
 
 /* -------------------------------------------------------------------------- */

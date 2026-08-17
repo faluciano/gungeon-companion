@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUserId, UnauthorizedError } from "@/lib/session";
+import { enforceRateLimit } from "@/lib/rate-limit";
 import { getGameData } from "@/lib/game-data";
 import {
   addItemToRun,
@@ -9,11 +10,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
-async function resolve() {
-  const userId = await requireUserId();
-  const run = await getOrCreateActiveRun(userId);
-  return { userId, runId: run.id };
-}
+// POST and DELETE share one bucket: both are taps on the same run.
+const ITEMS_LIMIT = { window: 60, max: 60 };
 
 export async function POST(request: Request) {
   try {
@@ -25,8 +23,11 @@ export async function POST(request: Request) {
     if (!data.itemsById.has(itemId)) {
       return NextResponse.json({ error: "Unknown item" }, { status: 404 });
     }
-    const { userId, runId } = await resolve();
-    await addItemToRun(userId, runId, itemId);
+    const userId = await requireUserId();
+    const limited = await enforceRateLimit(`run:items:${userId}`, ITEMS_LIMIT);
+    if (limited) return limited;
+    const run = await getOrCreateActiveRun(userId);
+    await addItemToRun(userId, run.id, itemId);
     return NextResponse.json({ ok: true });
   } catch (err) {
     if (err instanceof UnauthorizedError) {
@@ -43,8 +44,11 @@ export async function DELETE(request: Request) {
     if (!itemId) {
       return NextResponse.json({ error: "itemId is required" }, { status: 400 });
     }
-    const { userId, runId } = await resolve();
-    await removeItemFromRun(userId, runId, itemId);
+    const userId = await requireUserId();
+    const limited = await enforceRateLimit(`run:items:${userId}`, ITEMS_LIMIT);
+    if (limited) return limited;
+    const run = await getOrCreateActiveRun(userId);
+    await removeItemFromRun(userId, run.id, itemId);
     return NextResponse.json({ ok: true });
   } catch (err) {
     if (err instanceof UnauthorizedError) {

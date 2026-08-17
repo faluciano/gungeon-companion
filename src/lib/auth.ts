@@ -15,6 +15,34 @@ export const auth = betterAuth({
   appName: "Gungeon Companion",
   baseURL,
   database: drizzleAdapter(db, { provider: "pg", schema }),
+  rateLimit: {
+    // Default is production-only; enable everywhere so limits are testable
+    // locally and never silently off.
+    enabled: true,
+    // Per-IP-per-path default for all auth endpoints.
+    window: 60,
+    max: 60,
+    // Memory storage is per-instance (useless on serverless); persist counters
+    // in Postgres via the `rateLimit` model instead.
+    storage: "database",
+    customRules: {
+      // Registration creates rows in `user` (resolveUser with
+      // requireSession: false), so keep it strict to prevent table-filling.
+      "/passkey/generate-register-options": { window: 60, max: 3 },
+      "/passkey/verify-registration": { window: 60, max: 3 },
+      // Sign-in: slightly looser, still tight enough to blunt abuse.
+      "/passkey/generate-authenticate-options": { window: 60, max: 10 },
+      "/passkey/verify-authentication": { window: 60, max: 10 },
+    },
+  },
+  advanced: {
+    ipAddress: {
+      // Vercel sets x-real-ip to the client address as a single value, which
+      // is required for the resolver to trust a forwarded header without a
+      // trustedProxies list (multi-hop x-forwarded-for chains are rejected).
+      ipAddressHeaders: ["x-real-ip", "x-forwarded-for"],
+    },
+  },
   session: {
     // Serve session reads from a short-lived signed cookie instead of a
     // Postgres lookup on every request.

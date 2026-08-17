@@ -48,7 +48,7 @@ away**.
 
    ```bash
    bun install
-   bun run db:push     # create tables (auth + run state only)
+   bun run db:push     # create tables (auth, run state, rate limiting)
    bun run dev         # http://localhost:3000
    ```
 
@@ -62,6 +62,24 @@ away**.
 | `bun run db:push` | Push the Drizzle schema to the database |
 | `bun run db:studio` | Drizzle Studio |
 | `bunx tsx --test scripts/*.test.ts` | Unit tests (search + synergy engine) |
+
+## Rate limiting
+
+All API surfaces are rate limited, with counters stored in the Postgres
+`rate_limit` table (in-memory counters would be per-instance and useless on
+serverless):
+
+- **Auth endpoints** use Better Auth's built-in limiter (per IP + path,
+  429 + `X-Retry-After`). Passkey registration is strictest (3/min) since it
+  creates user rows without a session; sign-in allows 10/min; everything else
+  60/min. Configured in `src/lib/auth.ts`.
+- **Run mutations** (`/api/run/items`, `/api/run/reset`) are limited per user
+  (60/min and 10/min) via `src/lib/rate-limit.ts`, returning 429 +
+  `Retry-After`.
+
+> **Deploy note:** the `rate_limit` table is part of the Drizzle schema, so
+> existing databases need a `bun run db:push` (or `drizzle-kit push` against
+> prod) to create it — without it every auth request fails.
 
 ## Data pipeline
 
