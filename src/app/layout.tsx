@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Chakra_Petch, IBM_Plex_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const display = Chakra_Petch({
@@ -35,6 +36,7 @@ export default function RootLayout({
         <div className="pointer-events-none fixed inset-0 z-0 bg-vignette" aria-hidden />
         <div className="pointer-events-none fixed inset-0 z-0 bg-noise" aria-hidden />
         <div className="relative z-10 flex min-h-full flex-col">{children}</div>
+        <Analytics />
       </body>
     </html>
   );
