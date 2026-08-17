@@ -58,6 +58,9 @@ export default function SearchPanel({
             ⌕
           </span>
           <input
+            type="search"
+            inputMode="search"
+            enterKeyHint="search"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search guns & items…"

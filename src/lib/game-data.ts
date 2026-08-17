@@ -30,6 +30,8 @@ export type GameData = {
   synergies: ResolvedSynergy[];
   // itemId -> synergies that reference it.
   synergiesByItem: Map<string, ResolvedSynergy[]>;
+  // itemId -> names of synergies that reference it (search input).
+  synergyNamesById: Map<string, string[]>;
 };
 
 // Static reference dataset shipped with the app (no DB round-trip needed).
@@ -44,7 +46,7 @@ type DatasetSynergy = {
 type Dataset = { items: GameItem[]; synergies: DatasetSynergy[] };
 
 // Game data is static reference data, so build it once per runtime.
-const globalForData = globalThis as unknown as { gameData?: Promise<GameData> };
+const globalForData = globalThis as unknown as { gameData?: GameData };
 
 function build(): GameData {
   const { items, synergies } = dataset as unknown as Dataset;
@@ -83,12 +85,17 @@ function build(): GameData {
     }
   }
 
-  return { items, itemsById, synergies: resolved, synergiesByItem };
+  const synergyNamesById = new Map<string, string[]>();
+  for (const [id, syns] of synergiesByItem) {
+    synergyNamesById.set(
+      id,
+      syns.map((s) => s.name),
+    );
+  }
+
+  return { items, itemsById, synergies: resolved, synergiesByItem, synergyNamesById };
 }
 
-export function getGameData(): Promise<GameData> {
-  if (!globalForData.gameData) {
-    globalForData.gameData = Promise.resolve(build());
-  }
-  return globalForData.gameData;
+export function getGameData(): GameData {
+  return (globalForData.gameData ??= build());
 }

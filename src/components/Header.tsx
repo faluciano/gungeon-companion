@@ -20,7 +20,7 @@ export default function Header({ email }: { email: string | null }) {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line-bright bg-bg/85 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-line-bright bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-5 py-3.5">
         <div className="flex min-w-0 items-center gap-3 sm:gap-5">
           <Link href="/" className="flex items-center gap-3">

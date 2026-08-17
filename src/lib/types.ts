@@ -14,12 +14,6 @@ export type SearchResult = {
   activeCount: number;
 };
 
-export type SearchResponse = {
-  results: SearchResult[];
-  total: number;
-  hasRun: boolean;
-};
-
 export type SynergyEvaluationView = {
   id: string;
   name: string;

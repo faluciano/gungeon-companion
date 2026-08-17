@@ -1,53 +1,45 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { RunView, SearchResponse, SearchResult } from "@/lib/types";
+import { useCallback, useEffect, useMemo, useState, useDeferredValue } from "react";
+import { computeRunView, computeSearchResults } from "@/lib/run-core";
 import SearchPanel from "./SearchPanel";
 import Loadout from "./Loadout";
 import SynergyBoard from "./SynergyBoard";
 import ItemDetailModal from "./ItemDetailModal";
 
-export default function Dashboard({ initialRun }: { initialRun: RunView }) {
-  const [run, setRun] = useState<RunView>(initialRun);
+type ItemType = "gun" | "passive" | "active" | "";
+
+export default function Dashboard({
+  runId,
+  runName,
+  initialItemIds,
+}: {
+  runId: string;
+  runName: string;
+  initialItemIds: string[];
+}) {
+  // The run's item ids are the only client state; everything else (loadout,
+  // synergies, search results) derives synchronously from the bundled dataset.
+  const [ownedIds, setOwnedIds] = useState<Set<string>>(() => new Set(initialItemIds));
   const [query, setQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [searching, setSearching] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<ItemType>("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
-  const [detailRefresh, setDetailRefresh] = useState(0);
+  const [syncError, setSyncError] = useState(false);
   const [mobileTab, setMobileTab] = useState<"loadout" | "search" | "synergies">("search");
   const [expandedPanel, setExpandedPanel] = useState<typeof mobileTab | null>(null);
 
-  const searchSeq = useRef(0);
-  const lastArgs = useRef({ query: "", typeFilter: "" });
+  const deferredQuery = useDeferredValue(query);
 
-  const runSearch = useCallback(async (q: string, type: string) => {
-    lastArgs.current = { query: q, typeFilter: type };
-    if (!q.trim() && !type) {
-      setResults([]);
-      setSearching(false);
-      return;
-    }
-    const seq = ++searchSeq.current;
-    setSearching(true);
-    try {
-      const params = new URLSearchParams();
-      if (q.trim()) params.set("q", q.trim());
-      if (type) params.set("type", type);
-      const res = await fetch(`/api/search?${params.toString()}`);
-      const data: SearchResponse = await res.json();
-      if (seq === searchSeq.current) setResults(data.results);
-    } finally {
-      if (seq === searchSeq.current) setSearching(false);
-    }
-  }, []);
+  const run = useMemo(
+    () => computeRunView(runId, runName, ownedIds),
+    [runId, runName, ownedIds],
+  );
 
-  // Debounced search on query / filter change.
-  useEffect(() => {
-    const handle = setTimeout(() => runSearch(query, typeFilter), 180);
-    return () => clearTimeout(handle);
-  }, [query, typeFilter, runSearch]);
+  const results = useMemo(() => {
+    if (!deferredQuery.trim() && !typeFilter) return [];
+    return computeSearchResults(deferredQuery.trim(), typeFilter, ownedIds);
+  }, [deferredQuery, typeFilter, ownedIds]);
 
   useEffect(() => {
     if (!expandedPanel) return;
@@ -57,11 +49,6 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [expandedPanel]);
-
-  const refreshRun = useCallback(async () => {
-    const res = await fetch("/api/run");
-    if (res.ok) setRun((await res.json()) as RunView);
-  }, []);
 
   const setPending = (id: string, on: boolean) =>
     setPendingIds((prev) => {
@@ -73,44 +60,56 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
 
   const toggleItem = useCallback(
     async (id: string, owned: boolean) => {
+      if (pendingIds.has(id)) return;
       setPending(id, true);
-      // Optimistically reflect ownership in the current search results.
-      setResults((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, owned: !owned } : r)),
-      );
+      // Optimistic: the UI (loadout, synergies, search badges) updates
+      // immediately; the request only persists the change.
+      setOwnedIds((prev) => {
+        const next = new Set(prev);
+        if (owned) next.delete(id);
+        else next.add(id);
+        return next;
+      });
       try {
-        if (owned) {
-          await fetch(`/api/run/items?itemId=${encodeURIComponent(id)}`, {
-            method: "DELETE",
-          });
-        } else {
-          await fetch("/api/run/items", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ itemId: id }),
-          });
-        }
-        await Promise.all([
-          refreshRun(),
-          runSearch(lastArgs.current.query, lastArgs.current.typeFilter),
-        ]);
-        setDetailRefresh((n) => n + 1);
+        const res = owned
+          ? await fetch(`/api/run/items?itemId=${encodeURIComponent(id)}`, {
+              method: "DELETE",
+            })
+          : await fetch("/api/run/items", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ itemId: id }),
+            });
+        if (!res.ok) throw new Error(`Sync failed (${res.status})`);
+        setSyncError(false);
+      } catch {
+        // Roll back so the UI never shows unsaved state as saved.
+        setOwnedIds((prev) => {
+          const next = new Set(prev);
+          if (owned) next.add(id);
+          else next.delete(id);
+          return next;
+        });
+        setSyncError(true);
       } finally {
         setPending(id, false);
       }
     },
-    [refreshRun, runSearch],
+    [pendingIds],
   );
 
   const resetRun = useCallback(async () => {
-    await fetch("/api/run/reset", { method: "POST" });
-    await Promise.all([
-      refreshRun(),
-      runSearch(lastArgs.current.query, lastArgs.current.typeFilter),
-    ]);
-  }, [refreshRun, runSearch]);
-
-  const ownedSet = new Set(run.items.map((i) => i.id));
+    const previous = ownedIds;
+    setOwnedIds(new Set());
+    try {
+      const res = await fetch("/api/run/reset", { method: "POST" });
+      if (!res.ok) throw new Error(`Sync failed (${res.status})`);
+      setSyncError(false);
+    } catch {
+      setOwnedIds(previous);
+      setSyncError(true);
+    }
+  }, [ownedIds]);
 
   const panelHeight =
     "h-[calc(100dvh-11.5rem)] min-h-[24rem] lg:h-[calc(100vh-9rem)] lg:min-h-[26rem] lg:sticky lg:top-24";
@@ -133,34 +132,13 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
 
   return (
     <>
-      {/* Mobile tab switcher — desktop shows all three panels side by side. */}
-      <div className="sticky top-16 z-20 -mx-5 mb-4 border-b border-line-bright bg-bg/90 px-5 py-2 backdrop-blur-md lg:hidden">
-        <div className="grid grid-cols-3 gap-1.5">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setMobileTab(t.id)}
-              aria-pressed={mobileTab === t.id}
-              className={`btn flex items-center justify-center gap-1.5 px-2 py-2 text-xs ${
-                mobileTab === t.id ? "btn-primary" : "btn-ghost"
-              }`}
-            >
-              {t.label}
-              {t.badge != null && t.badge > 0 && (
-                <span
-                  className={`inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[0.6rem] font-bold leading-4 ${
-                    mobileTab === t.id ? "bg-bg/25 text-bg" : "bg-amber/20 text-amber"
-                  }`}
-                >
-                  {t.badge}
-                </span>
-              )}
-            </button>
-          ))}
+      {syncError && (
+        <div className="mb-3 border border-danger/60 bg-danger/10 px-4 py-2 text-xs text-danger">
+          Couldn&apos;t save your last change — check your connection and try again.
         </div>
-      </div>
+      )}
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_minmax(0,1.15fr)]">
+      <div className="grid grid-cols-1 gap-5 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)_minmax(0,1.15fr)] lg:pb-0">
         <div className={panelClass("loadout")}>
           <Loadout
             run={run}
@@ -176,12 +154,12 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
           <SearchPanel
             query={query}
             typeFilter={typeFilter}
-            results={results.map((r) => ({ ...r, owned: ownedSet.has(r.id) }))}
-            searching={searching}
+            results={results}
+            searching={query !== deferredQuery}
             hasQuery={Boolean(query.trim() || typeFilter)}
             pendingIds={pendingIds}
             onQueryChange={setQuery}
-            onTypeChange={setTypeFilter}
+            onTypeChange={(t) => setTypeFilter(t as ItemType)}
             onOpen={setSelectedId}
             onToggle={toggleItem}
             expanded={expandedPanel === "search"}
@@ -198,13 +176,41 @@ export default function Dashboard({ initialRun }: { initialRun: RunView }) {
         </div>
       </div>
 
+      {/* Mobile tab switcher — bottom of the screen, thumb-reachable. Desktop
+          shows all three panels side by side. */}
+      <nav className="fixed inset-x-0 bottom-0 z-20 border-t border-line-bright bg-bg/95 px-5 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
+        <div className="grid grid-cols-3 gap-1.5 py-2">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setMobileTab(t.id)}
+              aria-pressed={mobileTab === t.id}
+              className={`btn flex min-h-11 items-center justify-center gap-1.5 px-2 py-2 text-xs ${
+                mobileTab === t.id ? "btn-primary" : "btn-ghost"
+              }`}
+            >
+              {t.label}
+              {t.badge != null && t.badge > 0 && (
+                <span
+                  className={`inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[0.6rem] font-bold leading-4 ${
+                    mobileTab === t.id ? "bg-bg/25 text-bg" : "bg-amber/20 text-amber"
+                  }`}
+                >
+                  {t.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      </nav>
+
       {selectedId && (
         <ItemDetailModal
           itemId={selectedId}
-          refreshKey={detailRefresh}
+          ownedIds={ownedIds}
           pending={pendingIds.has(selectedId)}
           onClose={() => setSelectedId(null)}
-          onToggle={(id, owned) => toggleItem(id, owned)}
+          onToggle={toggleItem}
         />
       )}
     </>

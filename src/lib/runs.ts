@@ -23,9 +23,10 @@ export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> 
 
   let current = existing[0];
   if (!current) {
-    const id = randomUUID();
-    await db.insert(run).values({ id, userId, name: "Current Run", active: true });
-    const inserted = await db.select().from(run).where(eq(run.id, id)).limit(1);
+    const inserted = await db
+      .insert(run)
+      .values({ id: randomUUID(), userId, name: "Current Run", active: true })
+      .returning();
     current = inserted[0];
   }
 

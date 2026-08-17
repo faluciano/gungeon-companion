@@ -15,6 +15,14 @@ export const auth = betterAuth({
   appName: "Gungeon Companion",
   baseURL,
   database: drizzleAdapter(db, { provider: "pg", schema }),
+  session: {
+    // Serve session reads from a short-lived signed cookie instead of a
+    // Postgres lookup on every request.
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
   plugins: [
     passkey({
       rpID,

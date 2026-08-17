@@ -9,7 +9,9 @@ away**.
 - **Cloud-saved runs** in Postgres, per account.
 - **Extremely robust search** — punctuation/accent-insensitive, acronym-aware,
   typo-tolerant, and it also matches descriptions, flavour quotes, and synergy names.
-- Curated, datamined dataset of **501 items** and **394 synergies** bundled and seeded.
+- Curated, datamined dataset of **501 items** and **394 synergies** bundled with the app.
+  Search and synergy evaluation run **entirely in the browser** — zero latency, no
+  server round-trips; the server only handles auth and persists run item ids.
 
 ## Stack
 
@@ -42,12 +44,11 @@ away**.
    openssl rand -base64 32   # use for BETTER_AUTH_SECRET
    ```
 
-3. **Install, migrate, seed, run:**
+3. **Install, migrate, run:**
 
    ```bash
    bun install
-   bun run db:push     # create tables
-   bun run db:seed     # load the 501-item / 394-synergy dataset
+   bun run db:push     # create tables (auth + run state only)
    bun run dev         # http://localhost:3000
    ```
 
@@ -59,7 +60,6 @@ away**.
 | `bun run build` / `bun run start` | Production build / serve |
 | `bun run lint` | ESLint |
 | `bun run db:push` | Push the Drizzle schema to the database |
-| `bun run db:seed` | Seed the bundled dataset (idempotent) |
 | `bun run db:studio` | Drizzle Studio |
 | `bunx tsx --test scripts/*.test.ts` | Unit tests (search + synergy engine) |
 
@@ -67,7 +67,8 @@ away**.
 
 The dataset is bundled at `src/lib/data/dataset.json`. It is built by
 `scripts/build-dataset.py` (run with `uv run scripts/build-dataset.py`) from the raw
-datamined CSV/JSON in `scripts/raw/`. `scripts/seed.ts` loads it into the DB.
+datamined CSV/JSON in `scripts/raw/`. The app reads it directly (server and client);
+the database stores only auth tables and per-run item ids.
 
 ## How search works
 
@@ -102,7 +103,6 @@ Results are relevance-ranked. Single-character tokens are ignored in multi-word 
 
    ```bash
    DATABASE_URL="<prod-url>" bunx drizzle-kit push --force
-   DATABASE_URL="<prod-url>" bunx tsx scripts/seed.ts
    ```
 
 5. **Deploy.** Vercel auto-detects Next.js — no `vercel.json` needed.

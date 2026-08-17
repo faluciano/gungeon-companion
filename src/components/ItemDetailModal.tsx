@@ -1,45 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { ItemDetail } from "@/lib/types";
+import { useEffect, useMemo } from "react";
+import { computeItemDetail } from "@/lib/run-core";
 import { statusChipClass, statusLabel, typeGlyph, typeLabel } from "@/lib/ui";
 import TierBadge from "./TierBadge";
 import ItemIcon from "./ItemIcon";
 
 export default function ItemDetailModal({
   itemId,
-  refreshKey,
+  ownedIds,
   onClose,
   onToggle,
   pending,
 }: {
   itemId: string;
-  refreshKey: number;
+  ownedIds: Set<string>;
   onClose: () => void;
   onToggle: (id: string, owned: boolean) => void;
   pending: boolean;
 }) {
-  const [loaded, setLoaded] = useState<{
-    key: string;
-    data: ItemDetail;
-  } | null>(null);
-
-  const key = `${itemId}:${refreshKey}`;
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`/api/items/${itemId}`)
-      .then((r) => r.json())
-      .then((data: ItemDetail) => {
-        if (!cancelled) setLoaded({ key, data });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [itemId, key]);
-
-  const detail = loaded?.key === key ? loaded.data : null;
-  const loading = detail === null;
+  const detail = useMemo(() => computeItemDetail(itemId, ownedIds), [itemId, ownedIds]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -71,7 +51,7 @@ export default function ItemDetailModal({
             <div className="min-w-0">
               <p className="kicker mb-1">
                 {typeGlyph((item?.type ?? "gun") as never)}{" "}
-                {item ? typeLabel(item.type) : "Loading"}
+                {item ? typeLabel(item.type) : "Unknown item"}
               </p>
               <h2 className="truncate font-display text-2xl font-semibold text-ink">
                 {item?.name ?? "…"}
@@ -90,8 +70,10 @@ export default function ItemDetailModal({
           </div>
         </header>
 
-        {loading || !item ? (
-          <div className="p-8 text-center text-sm text-ink-faint">Consulting the Ammonomicon…</div>
+        {!detail || !item ? (
+          <div className="p-8 text-center text-sm text-ink-faint">
+            This item isn&apos;t in the Ammonomicon.
+          </div>
         ) : (
           <div className="p-5">
             <p className="text-sm leading-relaxed text-ink-dim">{item.description}</p>

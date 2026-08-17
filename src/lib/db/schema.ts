@@ -4,7 +4,6 @@ import {
   boolean,
   integer,
   timestamp,
-  pgEnum,
   primaryKey,
   index,
 } from "drizzle-orm/pg-core";
@@ -81,60 +80,6 @@ export const passkey = pgTable("passkey", {
 });
 
 /* -------------------------------------------------------------------------- */
-/*                            Gungeon reference data                          */
-/* -------------------------------------------------------------------------- */
-
-export const itemType = pgEnum("item_type", ["gun", "passive", "active"]);
-export const itemQuality = pgEnum("item_quality", ["D", "C", "B", "A", "S", "N"]);
-
-// Static game data: guns and items. `id` is a stable human-readable slug.
-export const item = pgTable(
-  "item",
-  {
-    id: text("id").primaryKey(),
-    name: text("name").notNull(),
-    type: itemType("type").notNull(),
-    quality: itemQuality("quality").notNull(),
-    description: text("description").notNull(),
-    // In-game flavour text ("blurb"), shown as a stylised quote.
-    quote: text("quote"),
-    // Ammonomicon icon URL (hotlinked from the community wiki CDN).
-    imageUrl: text("image_url"),
-  },
-  (t) => [index("item_name_idx").on(t.name)],
-);
-
-// A named synergy with a gameplay effect description.
-// A synergy is ACTIVE when the number of distinct satisfied component groups
-// (see synergyComponent.groupIndex) is >= requiredGroups. Items within the same
-// group are interchangeable alternatives (OR).
-export const synergy = pgTable("synergy", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  effect: text("effect").notNull(),
-  requiredGroups: integer("required_groups").notNull().default(2),
-});
-
-// Components of a synergy. Items sharing the same `groupIndex` are alternatives
-// (OR); every distinct group must be satisfied for the synergy to be active (AND).
-export const synergyComponent = pgTable(
-  "synergy_component",
-  {
-    synergyId: text("synergy_id")
-      .notNull()
-      .references(() => synergy.id, { onDelete: "cascade" }),
-    itemId: text("item_id")
-      .notNull()
-      .references(() => item.id, { onDelete: "cascade" }),
-    groupIndex: integer("group_index").notNull().default(0),
-  },
-  (t) => [
-    primaryKey({ columns: [t.synergyId, t.itemId] }),
-    index("synergy_component_item_idx").on(t.itemId),
-  ],
-);
-
-/* -------------------------------------------------------------------------- */
 /*                              Per-user run state                            */
 /* -------------------------------------------------------------------------- */
 
@@ -160,9 +105,9 @@ export const runItem = pgTable(
     runId: text("run_id")
       .notNull()
       .references(() => run.id, { onDelete: "cascade" }),
-    itemId: text("item_id")
-      .notNull()
-      .references(() => item.id, { onDelete: "cascade" }),
+    // Slug into the bundled dataset (src/lib/data/dataset.json) — game
+    // reference data lives in the app bundle, not in Postgres.
+    itemId: text("item_id").notNull(),
     acquiredAt: timestamp("acquired_at").notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.runId, t.itemId] })],
@@ -172,26 +117,6 @@ export const runItem = pgTable(
 /*                                 Relations                                  */
 /* -------------------------------------------------------------------------- */
 
-export const synergyRelations = relations(synergy, ({ many }) => ({
-  components: many(synergyComponent),
-}));
-
-export const synergyComponentRelations = relations(synergyComponent, ({ one }) => ({
-  synergy: one(synergy, {
-    fields: [synergyComponent.synergyId],
-    references: [synergy.id],
-  }),
-  item: one(item, {
-    fields: [synergyComponent.itemId],
-    references: [item.id],
-  }),
-}));
-
-export const itemRelations = relations(item, ({ many }) => ({
-  synergyComponents: many(synergyComponent),
-  runItems: many(runItem),
-}));
-
 export const runRelations = relations(run, ({ many, one }) => ({
   items: many(runItem),
   user: one(user, { fields: [run.userId], references: [user.id] }),
@@ -199,9 +124,6 @@ export const runRelations = relations(run, ({ many, one }) => ({
 
 export const runItemRelations = relations(runItem, ({ one }) => ({
   run: one(run, { fields: [runItem.runId], references: [run.id] }),
-  item: one(item, { fields: [runItem.itemId], references: [item.id] }),
 }));
 
-export type Item = typeof item.$inferSelect;
-export type Synergy = typeof synergy.$inferSelect;
 export type Run = typeof run.$inferSelect;

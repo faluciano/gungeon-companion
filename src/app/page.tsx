@@ -3,7 +3,7 @@ import Dashboard from "@/components/Dashboard";
 import AuthGate from "@/components/AuthGate";
 import SiteFooter from "@/components/SiteFooter";
 import { getSession } from "@/lib/session";
-import { getRunView } from "@/lib/run-view";
+import { getOrCreateActiveRun } from "@/lib/runs";
 
 export const dynamic = "force-dynamic";
 
@@ -44,13 +44,13 @@ export default async function Home() {
     );
   }
 
-  const run = await getRunView(session.user.id);
+  const run = await getOrCreateActiveRun(session.user.id);
 
   return (
     <>
       <Header email={session.user.email ?? null} />
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-5 py-6">
-        <Dashboard initialRun={run} />
+        <Dashboard runId={run.id} runName={run.name} initialItemIds={run.itemIds} />
       </main>
       <SiteFooter />
     </>

@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     if (!itemId) {
       return NextResponse.json({ error: "itemId is required" }, { status: 400 });
     }
-    const data = await getGameData();
+    const data = getGameData();
     if (!data.itemsById.has(itemId)) {
       return NextResponse.json({ error: "Unknown item" }, { status: 404 });
     }
