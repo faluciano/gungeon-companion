@@ -64,21 +64,31 @@ export default function Header({
             })}
           </nav>
         </div>
-        {email ? (
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-ink-faint md:inline">{email}</span>
-            <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleSignOut}>
-              Sign out
-            </button>
-          </div>
-        ) : guest ? (
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-ink-faint md:inline">Guest run</span>
-            <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleExitGuest}>
-              Sign in
-            </button>
-          </div>
-        ) : null}
+        <div className="flex items-center gap-3">
+          <a
+            href="https://ko-fi.com/faluciano"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn border border-amber bg-amber/10 px-3 py-1.5 text-xs font-bold text-amber hover:bg-amber/20"
+          >
+            ☕ Support
+          </a>
+          {email ? (
+            <>
+              <span className="hidden text-xs text-ink-faint md:inline">{email}</span>
+              <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleSignOut}>
+                Sign out
+              </button>
+            </>
+          ) : guest ? (
+            <>
+              <span className="hidden text-xs text-ink-faint md:inline">Guest run</span>
+              <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleExitGuest}>
+                Sign in
+              </button>
+            </>
+          ) : null}
+        </div>
       </div>
     </header>
   );
