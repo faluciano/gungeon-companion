@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { enterGuestMode } from "@/lib/guest";
 
 type Mode = "signin" | "signup";
 
@@ -144,6 +145,17 @@ export default function AuthGate() {
               ← Already have a passkey? Sign in
             </button>
           )}
+          <div className="mt-3">
+            <button
+              className="underline decoration-line-bright underline-offset-4 hover:text-ink"
+              onClick={() => {
+                enterGuestMode();
+                router.refresh();
+              }}
+            >
+              Or try a run without an account (saved on this device only)
+            </button>
+          </div>
         </div>
       </div>
     </div>

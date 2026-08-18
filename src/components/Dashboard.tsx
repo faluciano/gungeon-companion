@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState, useDeferredValue } from "react";
 import { computeRunView, computeSearchResults } from "@/lib/run-core";
+import { saveGuestItemIds } from "@/lib/guest";
 import SearchPanel from "./SearchPanel";
 import Loadout from "./Loadout";
 import SynergyBoard from "./SynergyBoard";
@@ -13,10 +14,13 @@ export default function Dashboard({
   runId,
   runName,
   initialItemIds,
+  guest = false,
 }: {
   runId: string;
   runName: string;
   initialItemIds: string[];
+  /** Guest runs persist to localStorage on this device instead of the server. */
+  guest?: boolean;
 }) {
   // The run's item ids are the only client state; everything else (loadout,
   // synergies, search results) derives synchronously from the bundled dataset.
@@ -58,9 +62,23 @@ export default function Dashboard({
       return next;
     });
 
+  // Guest runs never touch the network — mirror every change to localStorage.
+  useEffect(() => {
+    if (guest) saveGuestItemIds(ownedIds);
+  }, [guest, ownedIds]);
+
   const toggleItem = useCallback(
     async (id: string, owned: boolean) => {
       if (pendingIds.has(id)) return;
+      if (guest) {
+        setOwnedIds((prev) => {
+          const next = new Set(prev);
+          if (owned) next.delete(id);
+          else next.add(id);
+          return next;
+        });
+        return;
+      }
       setPending(id, true);
       // Optimistic: the UI (loadout, synergies, search badges) updates
       // immediately; the request only persists the change.
@@ -95,12 +113,13 @@ export default function Dashboard({
         setPending(id, false);
       }
     },
-    [pendingIds],
+    [pendingIds, guest],
   );
 
   const resetRun = useCallback(async () => {
     const previous = ownedIds;
     setOwnedIds(new Set());
+    if (guest) return;
     try {
       const res = await fetch("/api/run/reset", { method: "POST" });
       if (!res.ok) throw new Error(`Sync failed (${res.status})`);
@@ -109,7 +128,7 @@ export default function Dashboard({
       setOwnedIds(previous);
       setSyncError(true);
     }
-  }, [ownedIds]);
+  }, [ownedIds, guest]);
 
   const panelHeight =
     "h-[calc(100dvh-11.5rem)] min-h-[24rem] lg:h-[calc(100vh-9rem)] lg:min-h-[26rem] lg:sticky lg:top-24";

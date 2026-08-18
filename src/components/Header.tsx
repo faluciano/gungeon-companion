@@ -4,18 +4,30 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { exitGuestMode } from "@/lib/guest";
 
 const NAV: { href: string; label: string }[] = [
   { href: "/", label: "Run" },
   { href: "/shrines", label: "Shrines" },
 ];
 
-export default function Header({ email }: { email: string | null }) {
+export default function Header({
+  email,
+  guest = false,
+}: {
+  email: string | null;
+  guest?: boolean;
+}) {
   const router = useRouter();
   const pathname = usePathname();
 
   async function handleSignOut() {
     await authClient.signOut();
+    router.refresh();
+  }
+
+  function handleExitGuest() {
+    exitGuestMode();
     router.refresh();
   }
 
@@ -52,14 +64,21 @@ export default function Header({ email }: { email: string | null }) {
             })}
           </nav>
         </div>
-        {email && (
+        {email ? (
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-ink-faint md:inline">{email}</span>
             <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleSignOut}>
               Sign out
             </button>
           </div>
-        )}
+        ) : guest ? (
+          <div className="flex items-center gap-3">
+            <span className="hidden text-xs text-ink-faint md:inline">Guest run</span>
+            <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleExitGuest}>
+              Sign in
+            </button>
+          </div>
+        ) : null}
       </div>
     </header>
   );
