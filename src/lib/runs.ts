@@ -45,34 +45,31 @@ export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> 
   };
 }
 
-async function assertOwnership(userId: string, runId: string) {
+/**
+ * Verify the run belongs to the user and bump its updatedAt in one statement.
+ * Throws if the run doesn't exist or isn't owned by the user.
+ */
+async function touchOwnedRun(userId: string, runId: string) {
   const rows = await db
-    .select({ id: run.id })
-    .from(run)
+    .update(run)
+    .set({ updatedAt: new Date() })
     .where(and(eq(run.id, runId), eq(run.userId, userId)))
-    .limit(1);
+    .returning({ id: run.id });
   if (rows.length === 0) throw new Error("Run not found");
 }
 
 export async function addItemToRun(userId: string, runId: string, itemId: string) {
-  await assertOwnership(userId, runId);
+  await touchOwnedRun(userId, runId);
   await db.insert(runItem).values({ runId, itemId }).onConflictDoNothing();
-  await touchRun(runId);
 }
 
 export async function removeItemFromRun(userId: string, runId: string, itemId: string) {
-  await assertOwnership(userId, runId);
+  await touchOwnedRun(userId, runId);
   await db.delete(runItem).where(and(eq(runItem.runId, runId), eq(runItem.itemId, itemId)));
-  await touchRun(runId);
 }
 
 /** Reset the active run by clearing all of its items. */
 export async function resetRun(userId: string, runId: string) {
-  await assertOwnership(userId, runId);
+  await touchOwnedRun(userId, runId);
   await db.delete(runItem).where(eq(runItem.runId, runId));
-  await touchRun(runId);
-}
-
-async function touchRun(runId: string) {
-  await db.update(run).set({ updatedAt: new Date() }).where(eq(run.id, runId));
 }
