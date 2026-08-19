@@ -120,6 +120,26 @@ export default function AuthGate() {
                 ? "Sign in with passkey"
                 : "Create account + passkey"}
           </button>
+
+          <div className="flex items-center gap-3 text-xs text-ink-faint">
+            <span className="h-px flex-1 bg-line" />
+            or
+            <span className="h-px flex-1 bg-line" />
+          </div>
+
+          <button
+            className="btn btn-ghost w-full border border-line-bright px-4 py-3 text-sm"
+            disabled={busy}
+            onClick={() => {
+              enterGuestMode();
+              router.refresh();
+            }}
+          >
+            Play as guest — no account needed
+          </button>
+          <p className="text-center text-xs text-ink-faint">
+            Guest runs are saved on this device only.
+          </p>
         </div>
 
         <div className="mt-6 border-t border-line pt-4 text-center text-xs text-ink-faint">
@@ -145,17 +165,6 @@ export default function AuthGate() {
               ← Already have a passkey? Sign in
             </button>
           )}
-          <div className="mt-3">
-            <button
-              className="underline decoration-line-bright underline-offset-4 hover:text-ink"
-              onClick={() => {
-                enterGuestMode();
-                router.refresh();
-              }}
-            >
-              Or try a run without an account (saved on this device only)
-            </button>
-          </div>
         </div>
       </div>
     </div>
