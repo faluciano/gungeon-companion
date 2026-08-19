@@ -52,7 +52,11 @@ export default function ItemDetailModal({
             {item && (
               <ItemIcon
                 name={item.name}
-                imageUrl={item.imageUrl}
+                imageUrl={
+                  item.id === SER_JUNKAN_ID && junkan
+                    ? junkan.current.imageUrl
+                    : item.imageUrl
+                }
                 quality={item.quality}
                 size={64}
               />
@@ -122,6 +126,12 @@ export default function ItemDetailModal({
                             : "border-line"
                         }`}
                       >
+                        <ItemIcon
+                          name={r.rank}
+                          imageUrl={r.imageUrl}
+                          quality="C"
+                          size={32}
+                        />
                         <span className="w-14 shrink-0 text-right font-display font-semibold text-ink-dim">
                           {isMecha
                             ? "Gold"

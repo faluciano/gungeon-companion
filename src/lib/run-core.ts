@@ -6,7 +6,7 @@ import {
   type SynergyEvaluation,
 } from "@/lib/synergy/engine";
 import { searchItems } from "@/lib/search";
-import { junkanStatus } from "@/lib/junkan";
+import { junkanStatus, SER_JUNKAN_ID } from "@/lib/junkan";
 import type {
   ItemDetail,
   RunView,
@@ -53,11 +53,19 @@ export function computeRunView(
   const data = getGameData();
   const owned = new Set(itemIds);
 
+  const junkan = junkanStatus(owned, quantities);
+
   const items = [...owned]
     .map((id) => data.itemsById.get(id))
     .filter((i): i is GameItem => Boolean(i))
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((i) => ({ ...i, quantity: Math.max(1, quantities.get(i.id) ?? 1) }));
+    .map((i) => ({
+      ...i,
+      quantity: Math.max(1, quantities.get(i.id) ?? 1),
+      // Ser Junkan's icon tracks his current form.
+      imageUrl:
+        i.id === SER_JUNKAN_ID && junkan ? junkan.current.imageUrl : i.imageUrl,
+    }));
 
   // Only consider synergies that touch at least one owned item.
   const relevant = new Set<string>();
@@ -80,7 +88,7 @@ export function computeRunView(
     items,
     active,
     nearly,
-    junkan: junkanStatus(owned, quantities),
+    junkan,
     counts: {
       items: items.length,
       guns: items.filter((i) => i.type === "gun").length,
