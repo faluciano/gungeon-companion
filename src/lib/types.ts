@@ -1,4 +1,5 @@
 import type { ItemType, Quality, SynergyStatus } from "@/lib/ui";
+import type { JunkanStatus } from "@/lib/junkan";
 
 export type SearchResult = {
   id: string;
@@ -39,9 +40,12 @@ export type RunView = {
     description: string;
     quote: string | null;
     imageUrl: string | null;
+    quantity: number;
   }[];
   active: SynergyEvaluationView[];
   nearly: SynergyEvaluationView[];
+  /** Ser Junkan's rank for this loadout, or null when he isn't held. */
+  junkan: JunkanStatus | null;
   counts: { items: number; guns: number; passives: number; actives: number };
 };
 

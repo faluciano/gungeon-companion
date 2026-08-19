@@ -455,7 +455,7 @@
       "name": "Siren",
       "type": "gun",
       "quality": "C",
-      "description": "Fires a shotgun blast of bullets that leave pools of water.  Negates fall damage and goop effects while equipped.",
+      "description": "Fires a shotgun blast of bullets that leave pools of water. Negates fall damage and goop effects while equipped.",
       "quote": "Mershotgun",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/0/0a/Siren.png/revision/latest"
     },
@@ -797,7 +797,7 @@
       "name": "The Predator",
       "type": "gun",
       "quality": "B",
-      "description": "Locks onto enemies and fires high speed homing lasers.  Invisibility while reloading an empty magazine.",
+      "description": "Locks onto enemies and fires high speed homing lasers. Invisibility while reloading an empty magazine.",
       "quote": "High-tech $#!*",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/2/2e/The_Predator.png/revision/latest"
     },
@@ -2074,7 +2074,7 @@
       "id": "finished-gun",
       "name": "Finished Gun",
       "type": "gun",
-      "quality": "S",
+      "quality": "D",
       "description": "Replaces Unfinished Gun once the Ammonomicon is complete.",
       "quote": "Thanks For Playing",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/b/b5/Finished_Gun.png/revision/latest"

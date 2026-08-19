@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo } from "react";
 import { computeItemDetail } from "@/lib/run-core";
+import {
+  JUNKAN_RANKS,
+  MECHA_RANK,
+  SER_JUNKAN_ID,
+  type JunkanStatus,
+} from "@/lib/junkan";
 import { statusChipClass, statusLabel, typeGlyph, typeLabel } from "@/lib/ui";
 import TierBadge from "./TierBadge";
 import ItemIcon from "./ItemIcon";
@@ -9,12 +15,15 @@ import ItemIcon from "./ItemIcon";
 export default function ItemDetailModal({
   itemId,
   ownedIds,
+  junkan,
   onClose,
   onToggle,
   pending,
 }: {
   itemId: string;
   ownedIds: Set<string>;
+  /** Current run's Ser Junkan status, to highlight his rank in the ladder. */
+  junkan?: JunkanStatus | null;
   onClose: () => void;
   onToggle: (id: string, owned: boolean) => void;
   pending: boolean;
@@ -94,6 +103,49 @@ export default function ItemDetailModal({
                 {item.owned ? "− Remove from run" : "+ Add to run"}
               </button>
             </div>
+
+            {item.id === SER_JUNKAN_ID && (
+              <div className="mt-6">
+                <p className="kicker mb-3">Rank ladder · one rank per Junk</p>
+                <ul className="space-y-1.5">
+                  {[...JUNKAN_RANKS, MECHA_RANK].map((r) => {
+                    const isMecha = r === MECHA_RANK;
+                    const current =
+                      junkan != null &&
+                      (isMecha ? junkan.mecha : !junkan.mecha && junkan.current === r);
+                    return (
+                      <li
+                        key={r.rank}
+                        className={`flex gap-3 border px-3 py-2 text-xs ${
+                          current
+                            ? "border-amber/60 bg-amber/10"
+                            : "border-line"
+                        }`}
+                      >
+                        <span className="w-14 shrink-0 text-right font-display font-semibold text-ink-dim">
+                          {isMecha
+                            ? "Gold"
+                            : r.junk === 7
+                              ? "7+ junk"
+                              : `${r.junk} junk`}
+                        </span>
+                        <span className="min-w-0">
+                          <span className={`font-semibold ${current ? "text-amber" : "text-ink"}`}>
+                            {r.rank}
+                            {current ? " — current" : ""}
+                          </span>{" "}
+                          <span className="text-ink-faint">{r.effect}</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <p className="mt-2 text-[0.7rem] text-ink-faint">
+                  Lies count as Junk. Use the ×N stepper on Junk in your loadout
+                  to track pickups.
+                </p>
+              </div>
+            )}
 
             <div className="mt-6">
               <p className="kicker mb-3">

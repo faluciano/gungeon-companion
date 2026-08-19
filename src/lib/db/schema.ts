@@ -122,6 +122,9 @@ export const runItem = pgTable(
     // Slug into the bundled dataset (src/lib/data/dataset.json) — game
     // reference data lives in the app bundle, not in Postgres.
     itemId: text("item_id").notNull(),
+    // Only meaningful for stackable items (Junk family — see STACKABLE_IDS);
+    // everything else stays at 1.
+    quantity: integer("quantity").notNull().default(1),
     acquiredAt: timestamp("acquired_at").notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.runId, t.itemId] })],

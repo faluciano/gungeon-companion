@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState, useDeferredValue } from "react";
 import { computeRunView, computeSearchResults } from "@/lib/run-core";
-import { saveGuestItemIds } from "@/lib/guest";
+import { saveGuestRun } from "@/lib/guest";
+import { STACKABLE_IDS } from "@/lib/junkan";
 import SearchPanel from "./SearchPanel";
 import Loadout from "./Loadout";
 import SynergyBoard from "./SynergyBoard";
@@ -14,17 +15,24 @@ export default function Dashboard({
   runId,
   runName,
   initialItemIds,
+  initialQuantities = {},
   guest = false,
 }: {
   runId: string;
   runName: string;
   initialItemIds: string[];
+  /** itemId -> owned count for stackable items (Junk family). */
+  initialQuantities?: Record<string, number>;
   /** Guest runs persist to localStorage on this device instead of the server. */
   guest?: boolean;
 }) {
-  // The run's item ids are the only client state; everything else (loadout,
-  // synergies, search results) derives synchronously from the bundled dataset.
+  // The run's item ids (plus stack counts) are the only client state;
+  // everything else (loadout, synergies, search results) derives synchronously
+  // from the bundled dataset.
   const [ownedIds, setOwnedIds] = useState<Set<string>>(() => new Set(initialItemIds));
+  const [quantities, setQuantities] = useState<Map<string, number>>(
+    () => new Map(Object.entries(initialQuantities)),
+  );
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<ItemType>("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -36,8 +44,8 @@ export default function Dashboard({
   const deferredQuery = useDeferredValue(query);
 
   const run = useMemo(
-    () => computeRunView(runId, runName, ownedIds),
-    [runId, runName, ownedIds],
+    () => computeRunView(runId, runName, ownedIds, quantities),
+    [runId, runName, ownedIds, quantities],
   );
 
   const results = useMemo(() => {
@@ -64,12 +72,21 @@ export default function Dashboard({
 
   // Guest runs never touch the network — mirror every change to localStorage.
   useEffect(() => {
-    if (guest) saveGuestItemIds(ownedIds);
-  }, [guest, ownedIds]);
+    if (guest) saveGuestRun(ownedIds, quantities);
+  }, [guest, ownedIds, quantities]);
 
   const toggleItem = useCallback(
     async (id: string, owned: boolean) => {
       if (pendingIds.has(id)) return;
+      if (owned) {
+        // Dropping an item forgets its stack count.
+        setQuantities((prev) => {
+          if (!prev.has(id)) return prev;
+          const next = new Map(prev);
+          next.delete(id);
+          return next;
+        });
+      }
       if (guest) {
         setOwnedIds((prev) => {
           const next = new Set(prev);
@@ -116,9 +133,35 @@ export default function Dashboard({
     [pendingIds, guest],
   );
 
+  const setQuantity = useCallback(
+    async (id: string, quantity: number) => {
+      if (!STACKABLE_IDS.has(id)) return;
+      const clamped = Math.max(1, Math.min(99, Math.floor(quantity)));
+      const previous = quantities.get(id) ?? 1;
+      if (clamped === previous) return;
+      // Optimistic for both modes; guests persist via the localStorage effect.
+      setQuantities((prev) => new Map(prev).set(id, clamped));
+      if (guest) return;
+      try {
+        const res = await fetch("/api/run/items", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: id, quantity: clamped }),
+        });
+        if (!res.ok) throw new Error(`Sync failed (${res.status})`);
+        setSyncError(false);
+      } catch {
+        setQuantities((prev) => new Map(prev).set(id, previous));
+        setSyncError(true);
+      }
+    },
+    [guest, quantities],
+  );
+
   const resetRun = useCallback(async () => {
     const previous = ownedIds;
     setOwnedIds(new Set());
+    setQuantities(new Map());
     if (guest) return;
     try {
       const res = await fetch("/api/run/reset", { method: "POST" });
@@ -164,6 +207,7 @@ export default function Dashboard({
             pendingIds={pendingIds}
             onOpen={setSelectedId}
             onRemove={(id) => toggleItem(id, true)}
+            onSetQuantity={setQuantity}
             onReset={resetRun}
             expanded={expandedPanel === "loadout"}
             onToggleExpanded={() => toggleExpanded("loadout")}
@@ -227,6 +271,7 @@ export default function Dashboard({
         <ItemDetailModal
           itemId={selectedId}
           ownedIds={ownedIds}
+          junkan={run.junkan}
           pending={pendingIds.has(selectedId)}
           onClose={() => setSelectedId(null)}
           onToggle={toggleItem}

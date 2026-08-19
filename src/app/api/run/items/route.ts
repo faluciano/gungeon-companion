@@ -6,7 +6,9 @@ import {
   addItemToRun,
   getOrCreateActiveRun,
   removeItemFromRun,
+  setItemQuantity,
 } from "@/lib/runs";
+import { STACKABLE_IDS } from "@/lib/junkan";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,35 @@ export async function POST(request: Request) {
     if (limited) return limited;
     const run = await getOrCreateActiveRun(userId);
     await addItemToRun(userId, run.id, itemId);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    throw err;
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const { itemId, quantity } = (await request.json()) as {
+      itemId?: string;
+      quantity?: number;
+    };
+    if (!itemId || typeof quantity !== "number" || !Number.isFinite(quantity)) {
+      return NextResponse.json(
+        { error: "itemId and quantity are required" },
+        { status: 400 },
+      );
+    }
+    if (!STACKABLE_IDS.has(itemId)) {
+      return NextResponse.json({ error: "Item does not stack" }, { status: 400 });
+    }
+    const userId = await requireUserId();
+    const limited = await enforceRateLimit(`run:items:${userId}`, ITEMS_LIMIT);
+    if (limited) return limited;
+    const run = await getOrCreateActiveRun(userId);
+    await setItemQuantity(userId, run.id, itemId, quantity);
     return NextResponse.json({ ok: true });
   } catch (err) {
     if (err instanceof UnauthorizedError) {

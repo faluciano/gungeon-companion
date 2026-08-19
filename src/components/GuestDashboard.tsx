@@ -6,7 +6,8 @@ import {
   GUEST_RUN_ID,
   GUEST_RUN_NAME,
   GUEST_STORAGE_KEY,
-  loadGuestItemIds,
+  loadGuestRun,
+  type GuestRunState,
 } from "@/lib/guest";
 
 // localStorage is browser-only: the server (and hydration render) sees `null`
@@ -14,13 +15,13 @@ import {
 // the saved run. The snapshot is cached by raw string so its reference stays
 // stable between renders, as useSyncExternalStore requires.
 let lastRaw: string | null | undefined;
-let lastSnapshot: string[] = [];
+let lastSnapshot: GuestRunState = { itemIds: [], quantities: {} };
 
-function getSnapshot(): string[] {
+function getSnapshot(): GuestRunState {
   const raw = window.localStorage.getItem(GUEST_STORAGE_KEY);
   if (raw !== lastRaw) {
     lastRaw = raw;
-    lastSnapshot = loadGuestItemIds();
+    lastSnapshot = loadGuestRun();
   }
   return lastSnapshot;
 }
@@ -31,9 +32,9 @@ function subscribe(onStoreChange: () => void) {
 }
 
 export default function GuestDashboard() {
-  const itemIds = useSyncExternalStore(subscribe, getSnapshot, () => null);
+  const state = useSyncExternalStore(subscribe, getSnapshot, () => null);
 
-  if (itemIds === null) {
+  if (state === null) {
     return (
       <div className="grid min-h-[24rem] place-items-center text-xs uppercase tracking-[0.28em] text-ink-faint">
         Opening the Ammonomicon…
@@ -50,7 +51,8 @@ export default function GuestDashboard() {
       <Dashboard
         runId={GUEST_RUN_ID}
         runName={GUEST_RUN_NAME}
-        initialItemIds={itemIds}
+        initialItemIds={state.itemIds}
+        initialQuantities={state.quantities}
         guest
       />
     </>

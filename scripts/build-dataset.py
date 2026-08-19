@@ -45,11 +45,21 @@ SPRITE_FIXUPS = {
 }
 
 
+# Corrections where the datamined source disagrees with the wiki (verified via
+# scripts/verify-dataset.py against the wiki's master Items/Guns tables and the
+# item's own page infobox). Keyed by item name.
+QUALITY_OVERRIDES = {
+    "Finished Gun": "D",
+}
+
+
 def fix_sprites(text: str | None) -> str | None:
     """Restore words for wiki sprites stripped from the datamined source."""
     if text is None:
         return None
-    return SPRITE_FIXUPS.get(text, text)
+    text = SPRITE_FIXUPS.get(text, text)
+    # Collapse leftover double spaces (stripped sprites, sentence spacing).
+    return re.sub(r"  +", " ", text)
 
 
 def slugify(name: str) -> str:
@@ -82,6 +92,7 @@ def main() -> None:
 
     def add_item(name, type_, qual, description, quote):
         name = name.strip()
+        qual = QUALITY_OVERRIDES.get(name, qual)
         description = fix_sprites(description)
         iid = slugify(name)
         if iid in items:

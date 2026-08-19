@@ -66,7 +66,12 @@ export default async function Home() {
     <>
       <Header email={session.user.email ?? null} />
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-5 py-6">
-        <Dashboard runId={run.id} runName={run.name} initialItemIds={run.itemIds} />
+        <Dashboard
+          runId={run.id}
+          runName={run.name}
+          initialItemIds={run.itemIds}
+          initialQuantities={run.quantities}
+        />
       </main>
       <SiteFooter />
     </>

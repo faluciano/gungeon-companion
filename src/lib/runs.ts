@@ -10,6 +10,8 @@ export type RunSummary = {
   active: boolean;
   createdAt: Date;
   itemIds: string[];
+  /** itemId -> owned count; only stackable items ever exceed 1. */
+  quantities: Record<string, number>;
 };
 
 /** Get the user's active run, creating a default one if none exists. */
@@ -31,7 +33,7 @@ export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> 
   }
 
   const items = await db
-    .select({ itemId: runItem.itemId })
+    .select({ itemId: runItem.itemId, quantity: runItem.quantity })
     .from(runItem)
     .where(eq(runItem.runId, current.id));
 
@@ -42,6 +44,7 @@ export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> 
     active: current.active,
     createdAt: current.createdAt,
     itemIds: items.map((i) => i.itemId),
+    quantities: Object.fromEntries(items.map((i) => [i.itemId, i.quantity])),
   };
 }
 
@@ -61,6 +64,21 @@ async function touchOwnedRun(userId: string, runId: string) {
 export async function addItemToRun(userId: string, runId: string, itemId: string) {
   await touchOwnedRun(userId, runId);
   await db.insert(runItem).values({ runId, itemId }).onConflictDoNothing();
+}
+
+/** Set a stackable item's owned count (clamped to [1, 99]; item must be in the run). */
+export async function setItemQuantity(
+  userId: string,
+  runId: string,
+  itemId: string,
+  quantity: number,
+) {
+  await touchOwnedRun(userId, runId);
+  const clamped = Math.max(1, Math.min(99, Math.floor(quantity)));
+  await db
+    .update(runItem)
+    .set({ quantity: clamped })
+    .where(and(eq(runItem.runId, runId), eq(runItem.itemId, itemId)));
 }
 
 export async function removeItemFromRun(userId: string, runId: string, itemId: string) {

@@ -2,6 +2,7 @@
 
 import type { RunView } from "@/lib/types";
 import { typeGlyph } from "@/lib/ui";
+import { STACKABLE_IDS } from "@/lib/junkan";
 import ItemIcon from "./ItemIcon";
 import TierTag from "./TierTag";
 
@@ -10,6 +11,7 @@ export default function Loadout({
   pendingIds,
   onOpen,
   onRemove,
+  onSetQuantity,
   onReset,
   expanded,
   onToggleExpanded,
@@ -18,6 +20,7 @@ export default function Loadout({
   pendingIds: Set<string>;
   onOpen: (id: string) => void;
   onRemove: (id: string) => void;
+  onSetQuantity: (id: string, quantity: number) => void;
   onReset: () => void;
   expanded: boolean;
   onToggleExpanded: () => void;
@@ -58,6 +61,28 @@ export default function Loadout({
         <span>{typeGlyph("active")} {counts.actives} actives</span>
       </div>
 
+      {run.junkan && (
+        <div className="border-b border-line bg-amber/5 px-4 py-2.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="kicker text-amber">
+              Ser Junkan · {run.junkan.current.rank}
+            </p>
+            <p className="text-[0.65rem] text-ink-faint">
+              {run.junkan.mecha
+                ? "Gold Junk form"
+                : `${run.junkan.junkCount} junk${
+                    run.junkan.next
+                      ? ` · next rank at ${run.junkan.next.junk}`
+                      : " · max rank"
+                  }`}
+            </p>
+          </div>
+          <p className="mt-1 text-[0.7rem] leading-relaxed text-ink-dim">
+            {run.junkan.current.effect}
+          </p>
+        </div>
+      )}
+
       <div className="min-h-0 flex-1 overflow-y-auto p-3">
         {run.items.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 px-6 py-10 text-center">
@@ -85,6 +110,31 @@ export default function Loadout({
                   </div>
                   <p className="line-clamp-1 text-[0.7rem] text-ink-faint">{it.description}</p>
                 </div>
+                {STACKABLE_IDS.has(it.id) && (
+                  <div
+                    className="flex shrink-0 items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      className="btn btn-ghost h-7 w-7 text-sm leading-none"
+                      disabled={it.quantity <= 1}
+                      aria-label={`Fewer ${it.name}`}
+                      onClick={() => onSetQuantity(it.id, it.quantity - 1)}
+                    >
+                      −
+                    </button>
+                    <span className="min-w-6 text-center font-display text-sm font-semibold text-ink">
+                      ×{it.quantity}
+                    </span>
+                    <button
+                      className="btn btn-ghost h-7 w-7 text-sm leading-none"
+                      aria-label={`More ${it.name}`}
+                      onClick={() => onSetQuantity(it.id, it.quantity + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+                )}
                 <button
                   className="btn btn-ghost h-7 w-7 shrink-0 text-sm leading-none opacity-60 group-hover:opacity-100"
                   disabled={pendingIds.has(it.id)}

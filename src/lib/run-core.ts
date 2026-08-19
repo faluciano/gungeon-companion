@@ -6,6 +6,7 @@ import {
   type SynergyEvaluation,
 } from "@/lib/synergy/engine";
 import { searchItems } from "@/lib/search";
+import { junkanStatus } from "@/lib/junkan";
 import type {
   ItemDetail,
   RunView,
@@ -47,6 +48,7 @@ export function computeRunView(
   runId: string,
   name: string,
   itemIds: Iterable<string>,
+  quantities: ReadonlyMap<string, number> = new Map(),
 ): RunView {
   const data = getGameData();
   const owned = new Set(itemIds);
@@ -54,7 +56,8 @@ export function computeRunView(
   const items = [...owned]
     .map((id) => data.itemsById.get(id))
     .filter((i): i is GameItem => Boolean(i))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((i) => ({ ...i, quantity: Math.max(1, quantities.get(i.id) ?? 1) }));
 
   // Only consider synergies that touch at least one owned item.
   const relevant = new Set<string>();
@@ -77,6 +80,7 @@ export function computeRunView(
     items,
     active,
     nearly,
+    junkan: junkanStatus(owned, quantities),
     counts: {
       items: items.length,
       guns: items.filter((i) => i.type === "gun").length,
