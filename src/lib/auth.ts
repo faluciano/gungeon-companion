@@ -8,12 +8,16 @@ import { db, schema } from "@/lib/db";
 
 const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
 const rpID = new URL(baseURL).hostname;
+// WebAuthn allows subdomain origins of the rpID, so the www host can share
+// the apex's passkeys.
+const wwwOrigin = rpID === "localhost" ? [] : [`https://www.${rpID}`];
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const auth = betterAuth({
   appName: "Gungeon Companion",
   baseURL,
+  trustedOrigins: wwwOrigin,
   database: drizzleAdapter(db, { provider: "pg", schema }),
   rateLimit: {
     // Default is production-only; enable everywhere so limits are testable
@@ -55,7 +59,7 @@ export const auth = betterAuth({
     passkey({
       rpID,
       rpName: "Gungeon Companion",
-      origin: baseURL,
+      origin: [baseURL, ...wwwOrigin],
       authenticatorSelection: {
         residentKey: "preferred",
         userVerification: "preferred",
