@@ -59,13 +59,18 @@ export function computeRunView(
     .map((id) => data.itemsById.get(id))
     .filter((i): i is GameItem => Boolean(i))
     .sort((a, b) => a.name.localeCompare(b.name))
-    .map((i) => ({
-      ...i,
-      quantity: Math.max(1, quantities.get(i.id) ?? 1),
-      // Ser Junkan's icon tracks his current form.
-      imageUrl:
-        i.id === SER_JUNKAN_ID && junkan ? junkan.current.imageUrl : i.imageUrl,
-    }));
+    .map((i) => {
+      // Ser Junkan's icon and description track his current form.
+      if (i.id === SER_JUNKAN_ID && junkan) {
+        return {
+          ...i,
+          quantity: Math.max(1, quantities.get(i.id) ?? 1),
+          imageUrl: junkan.current.imageUrl,
+          description: `${junkan.current.rank} — ${junkan.current.effect}`,
+        };
+      }
+      return { ...i, quantity: Math.max(1, quantities.get(i.id) ?? 1) };
+    });
 
   // Only consider synergies that touch at least one owned item.
   const relevant = new Set<string>();
