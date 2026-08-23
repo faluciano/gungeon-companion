@@ -33,7 +33,7 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-30 border-b border-line-bright bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4 px-5 py-3.5">
+      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-3 py-3.5 sm:gap-4 sm:px-5">
         <div className="flex min-w-0 items-center gap-3 sm:gap-5">
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-9 w-9 shrink-0 place-items-center border border-amber bg-amber/10 font-display text-lg font-bold text-amber hard-shadow">
@@ -64,14 +64,14 @@ export default function Header({
             })}
           </nav>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
           <a
             href="https://ko-fi.com/faluciano"
             target="_blank"
             rel="noopener noreferrer"
             className="btn border border-amber bg-amber/10 px-3 py-1.5 text-xs font-bold text-amber hover:bg-amber/20"
           >
-            ☕ Support
+            ☕<span className="hidden sm:inline"> Support</span>
           </a>
           {email ? (
             <>
