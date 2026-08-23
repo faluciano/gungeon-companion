@@ -124,7 +124,7 @@ export default function SearchPanel({
                       r.activeCount === 0 &&
                       r.synergyCount > 0 && (
                         <span className="chip chip-potential">
-                          {r.synergyCount} synergy{r.synergyCount === 1 ? "" : "s"}
+                          {r.synergyCount} {r.synergyCount === 1 ? "synergy" : "synergies"}
                         </span>
                       )}
                   </div>
