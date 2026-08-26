@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function SiteFooter() {
   return (
     <footer className="border-t border-line px-5 py-4 text-center text-[0.65rem] text-ink-faint">
@@ -12,6 +14,10 @@ export default function SiteFooter() {
       >
         Support this project on Ko-fi
       </a>
+      {" · "}
+      <Link href="/privacy" className="underline hover:text-ink">
+        Privacy
+      </Link>
     </footer>
   );
 }

@@ -55,6 +55,14 @@ export const auth = betterAuth({
       maxAge: 5 * 60,
     },
   },
+  user: {
+    // Self-service account deletion (the /privacy page's delete button).
+    // Passkey accounts have no password, so better-auth falls back to the
+    // session-freshness check: stale sessions must re-authenticate first.
+    deleteUser: {
+      enabled: true,
+    },
+  },
   plugins: [
     passkey({
       rpID,
