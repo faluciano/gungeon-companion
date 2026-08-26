@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "timezone": "America/Los_Angeles",
+  "schedule": ["after 5pm"],
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["after 5pm on monday"]
+  },
+  "packageRules": [
+    {
+      "description": "Automerge non-major updates once checks pass",
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "description": "Keep Next.js and eslint-config-next in lockstep",
+      "matchPackageNames": ["next", "eslint-config-next"],
+      "groupName": "nextjs"
+    },
+    {
+      "description": "Keep React packages together",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "groupName": "react"
+    },
+    {
+      "description": "Match @types/node to the Node 24 runtime on Vercel",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "^24"
+    },
+    {
+      "description": "Hold eslint on v9 — eslint-plugin-react (via eslint-config-next) crashes under v10",
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "^9"
+    },
+    {
+      "description": "Hold typescript below 6.1 — typescript-eslint peer range caps at <6.1.0; revisit for TS 7 when it lifts",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.1"
+    }
+  ]
+}

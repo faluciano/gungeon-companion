@@ -23,12 +23,12 @@ export default function Header({
 
   async function handleSignOut() {
     await authClient.signOut();
-    router.refresh();
+    router.push("/");
   }
 
   function handleExitGuest() {
     exitGuestMode();
-    router.refresh();
+    router.push("/");
   }
 
   return (
