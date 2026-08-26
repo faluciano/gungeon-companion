@@ -1,12 +1,11 @@
 import Header from "@/components/Header";
 import AuthGate from "@/components/AuthGate";
 import SiteFooter from "@/components/SiteFooter";
-import RedirectIfActive from "@/components/RedirectIfActive";
+import ContinueRunCta from "@/components/ContinueRunCta";
 
 export default function Home() {
   return (
     <>
-      <RedirectIfActive />
       <Header email={null} />
       <main className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-center px-5 py-10">
         <div className="grid items-center gap-10 lg:grid-cols-2">
@@ -29,6 +28,7 @@ export default function Home() {
               <li>◈ Live synergy detection as your loadout changes</li>
               <li>◆ Passwordless passkey sign-in · runs synced to your account</li>
             </ul>
+            <ContinueRunCta />
           </div>
           <AuthGate />
         </div>
