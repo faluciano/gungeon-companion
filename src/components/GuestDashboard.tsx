@@ -42,12 +42,11 @@ export default function GuestDashboard() {
     );
   }
 
+  // No guest banner — guest is the default experience, and the header's
+  // "Guest run · Sign in" already says how to sync. Signed-in users get the
+  // "Synced" marker in the header instead.
   return (
     <>
-      <div className="mb-3 border border-amber/50 bg-amber/10 px-4 py-2 text-xs text-amber">
-        Guest run — saved only in this browser. Sign in with a passkey to sync
-        your runs across devices.
-      </div>
       <Dashboard
         runId={GUEST_RUN_ID}
         runName={GUEST_RUN_NAME}

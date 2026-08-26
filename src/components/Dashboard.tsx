@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useDeferredValue } from "react";
 import { computeRunView, computeSearchResults } from "@/lib/run-core";
 import { saveGuestRun } from "@/lib/guest";
+import { buildShareUrl } from "@/lib/share";
 import { STACKABLE_IDS } from "@/lib/junkan";
 import SearchPanel from "./SearchPanel";
 import Loadout from "./Loadout";
@@ -74,6 +75,19 @@ export default function Dashboard({
   useEffect(() => {
     if (guest) saveGuestRun(ownedIds, quantities);
   }, [guest, ownedIds, quantities]);
+
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareRun = useCallback(async () => {
+    const url = buildShareUrl(window.location.origin, ownedIds, quantities);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      // Clipboard blocked (permissions, non-secure context) — show the link.
+      window.prompt("Copy your share link:", url);
+    }
+  }, [ownedIds, quantities]);
 
   const toggleItem = useCallback(
     async (id: string, owned: boolean) => {
@@ -209,6 +223,8 @@ export default function Dashboard({
             onRemove={(id) => toggleItem(id, true)}
             onSetQuantity={setQuantity}
             onReset={resetRun}
+            onShare={shareRun}
+            shareCopied={shareCopied}
             expanded={expandedPanel === "loadout"}
             onToggleExpanded={() => toggleExpanded("loadout")}
           />

@@ -13,6 +13,8 @@ export default function Loadout({
   onRemove,
   onSetQuantity,
   onReset,
+  onShare,
+  shareCopied = false,
   expanded,
   onToggleExpanded,
 }: {
@@ -22,6 +24,9 @@ export default function Loadout({
   onRemove: (id: string) => void;
   onSetQuantity: (id: string, quantity: number) => void;
   onReset: () => void;
+  /** Copy a share link for this run; omitted when sharing doesn't apply. */
+  onShare?: () => void;
+  shareCopied?: boolean;
   expanded: boolean;
   onToggleExpanded: () => void;
 }) {
@@ -44,6 +49,16 @@ export default function Loadout({
           >
             {expanded ? "↙ Collapse" : "↗ Expand"}
           </button>
+          {onShare && (
+            <button
+              className="btn btn-ghost px-3 py-1.5 text-xs"
+              onClick={onShare}
+              disabled={counts.items === 0}
+              title="Copy a link to this run — anyone can open it, no account needed"
+            >
+              {shareCopied ? "✓ Copied" : "Share"}
+            </button>
+          )}
           <button
             className="btn btn-ghost px-3 py-1.5 text-xs"
             onClick={onReset}

@@ -75,6 +75,12 @@ export default function Header({
           </a>
           {email ? (
             <>
+              <span
+                className="rounded-sm bg-teal/15 px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-teal"
+                title={`Runs sync to ${email} across devices`}
+              >
+                ◆ Synced
+              </span>
               <span className="hidden text-xs text-ink-faint md:inline">{email}</span>
               <button className="btn btn-ghost px-3 py-1.5 text-xs" onClick={handleSignOut}>
                 Sign out

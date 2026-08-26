@@ -86,6 +86,26 @@ export async function removeItemFromRun(userId: string, runId: string, itemId: s
   await db.delete(runItem).where(and(eq(runItem.runId, runId), eq(runItem.itemId, itemId)));
 }
 
+/**
+ * Replace the run's entire item list in one transaction — used when importing
+ * a shared run into an account. Callers validate ids and quantities.
+ */
+export async function replaceRunItems(
+  userId: string,
+  runId: string,
+  items: { itemId: string; quantity: number }[],
+) {
+  await touchOwnedRun(userId, runId);
+  await db.transaction(async (tx) => {
+    await tx.delete(runItem).where(eq(runItem.runId, runId));
+    if (items.length > 0) {
+      await tx
+        .insert(runItem)
+        .values(items.map((i) => ({ runId, itemId: i.itemId, quantity: i.quantity })));
+    }
+  });
+}
+
 /** Reset the active run by clearing all of its items. */
 export async function resetRun(userId: string, runId: string) {
   await touchOwnedRun(userId, runId);

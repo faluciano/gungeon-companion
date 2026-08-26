@@ -6,6 +6,7 @@ import {
   addItemToRun,
   getOrCreateActiveRun,
   removeItemFromRun,
+  replaceRunItems,
   setItemQuantity,
 } from "@/lib/runs";
 import { STACKABLE_IDS } from "@/lib/junkan";
@@ -31,6 +32,42 @@ export async function POST(request: Request) {
     const run = await getOrCreateActiveRun(userId);
     await addItemToRun(userId, run.id, itemId);
     return NextResponse.json({ ok: true });
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    throw err;
+  }
+}
+
+/** Replace the whole run at once — importing a shared run link. */
+export async function PUT(request: Request) {
+  try {
+    const { items } = (await request.json()) as {
+      items?: { itemId?: string; quantity?: number }[];
+    };
+    if (!Array.isArray(items) || items.length > 600) {
+      return NextResponse.json({ error: "items array is required" }, { status: 400 });
+    }
+    const data = getGameData();
+    const seen = new Set<string>();
+    const validated: { itemId: string; quantity: number }[] = [];
+    for (const entry of items) {
+      const itemId = entry?.itemId;
+      if (!itemId || seen.has(itemId) || !data.itemsById.has(itemId)) continue;
+      seen.add(itemId);
+      const raw = typeof entry.quantity === "number" ? entry.quantity : 1;
+      const quantity = STACKABLE_IDS.has(itemId)
+        ? Math.max(1, Math.min(99, Math.floor(raw)))
+        : 1;
+      validated.push({ itemId, quantity });
+    }
+    const userId = await requireUserId();
+    const limited = await enforceRateLimit(`run:items:${userId}`, ITEMS_LIMIT);
+    if (limited) return limited;
+    const run = await getOrCreateActiveRun(userId);
+    await replaceRunItems(userId, run.id, validated);
+    return NextResponse.json({ ok: true, count: validated.length });
   } catch (err) {
     if (err instanceof UnauthorizedError) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
