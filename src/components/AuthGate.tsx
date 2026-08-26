@@ -26,7 +26,7 @@ export default function AuthGate() {
         setError(res.error.message ?? "Could not sign in with that passkey.");
         return;
       }
-      router.refresh();
+      router.push("/run");
     } catch {
       setError("Passkey sign-in was cancelled or is unavailable on this device.");
     } finally {
@@ -61,7 +61,7 @@ export default function AuthGate() {
         setMode("signin");
         return;
       }
-      router.refresh();
+      router.push("/run");
     } catch {
       setError("Passkey registration was cancelled or is unavailable on this device.");
     } finally {
@@ -132,7 +132,7 @@ export default function AuthGate() {
             disabled={busy}
             onClick={() => {
               enterGuestMode();
-              router.refresh();
+              router.push("/run");
             }}
           >
             Play as guest — no account needed
