@@ -157,7 +157,8 @@ export default function SharedRun({ signedIn }: { signedIn: boolean }) {
         saveGuestRun(decoded.itemIds, quantities);
         enterGuestMode();
       }
-      window.location.href = "/";
+      // Straight to the tracker — the guest cookie / session is set by now.
+      window.location.href = "/run";
     } catch {
       setSaveError(true);
       setSaving(false);
