@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { exitGuestMode } from "@/lib/guest";
+import InstallButton from "@/components/InstallButton";
 
 const NAV: { href: string; label: string }[] = [
   { href: "/", label: "Run" },
@@ -65,6 +66,7 @@ export default function Header({
           </nav>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+          <InstallButton />
           <a
             href="https://ko-fi.com/faluciano"
             target="_blank"
