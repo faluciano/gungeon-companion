@@ -3,8 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import {
   canInstall,
-  isIOS,
-  isStandalone,
+  manualInstallPlatform,
   promptInstall,
   subscribeToInstallPrompt,
 } from "@/lib/pwa";
@@ -12,22 +11,23 @@ import {
 const noopSubscribe = () => () => {};
 
 export default function InstallButton() {
-  // Chromium hands us a deferred prompt...
+  // Chromium hands us a deferred prompt — desktop included, so this is the
+  // path most Mac and Windows users take.
   const installable = useSyncExternalStore(
     subscribeToInstallPrompt,
     canInstall,
     () => false,
   );
-  // ...iOS Safari never does, so it gets instructions instead. Reading this
-  // through a store keeps the server render (false) from mismatching.
-  const iosHintAvailable = useSyncExternalStore(
+  // Safari has no prompt to defer, so it gets instructions instead. Reading
+  // this through a store keeps the server render (null) from mismatching.
+  const manualPlatform = useSyncExternalStore(
     noopSubscribe,
-    () => isIOS() && !isStandalone(),
-    () => false,
+    manualInstallPlatform,
+    () => null,
   );
   const [hintOpen, setHintOpen] = useState(false);
 
-  if (!installable && !iosHintAvailable) return null;
+  if (!installable && !manualPlatform) return null;
 
   return (
     <div className="relative">
@@ -46,9 +46,18 @@ export default function InstallButton() {
       </button>
       {!installable && hintOpen ? (
         <p className="absolute right-0 top-full z-40 mt-2 w-56 border border-line-bright bg-bg-panel p-3 text-[0.65rem] leading-relaxed text-ink-dim hard-shadow">
-          Tap the Share button in Safari, then{" "}
-          <span className="text-ink">Add to Home Screen</span> to install the
-          Ammonomicon.
+          {manualPlatform === "ios" ? (
+            <>
+              Tap the Share button in Safari, then{" "}
+              <span className="text-ink">Add to Home Screen</span> to install
+              the Ammonomicon.
+            </>
+          ) : (
+            <>
+              In Safari, choose <span className="text-ink">File → Add to Dock</span>{" "}
+              to install the Ammonomicon. Requires macOS Sonoma or later.
+            </>
+          )}
         </p>
       ) : null}
     </div>

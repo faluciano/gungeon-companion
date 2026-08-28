@@ -44,6 +44,28 @@ export function isIOS() {
 }
 
 /**
+ * Safari is the only engine with no install API — it installs through a menu
+ * item instead, which differs between iPhone and Mac. Every Chromium browser
+ * (on any OS) gives us `beforeinstallprompt`, so it never needs a hint.
+ *
+ * Returns the platform whose instructions to show, or null when the browser
+ * either offers a real prompt or cannot install at all.
+ */
+export function manualInstallPlatform(): "ios" | "macos" | null {
+  if (typeof navigator === "undefined") return null;
+  if (isStandalone()) return null;
+
+  const isSafari =
+    navigator.vendor === "Apple Computer, Inc." &&
+    // Chrome/Firefox/Edge on iOS are WebKit wrappers sharing Apple's vendor
+    // string, and none of them can install to the home screen.
+    !/CriOS|FxiOS|EdgiOS|Chrome|Chromium|Edg\//.test(navigator.userAgent);
+  if (!isSafari) return null;
+
+  return isIOS() ? "ios" : "macos";
+}
+
+/**
  * Opens the browser's install dialog and reports the user's choice.
  * Resolves to the outcome, or null when no prompt was available.
  */
