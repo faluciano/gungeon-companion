@@ -11,6 +11,7 @@ const NAV: { href: string; label: string }[] = [
   { href: "/", label: "Run" },
   { href: "/items", label: "Items" },
   { href: "/shrines", label: "Shrines" },
+  { href: "/shortcuts", label: "Shortcuts" },
 ];
 
 export default function Header({
