@@ -6,7 +6,7 @@
 //
 // Bump CACHE when the precache list, the offline page, or the strategy changes
 // — otherwise installed clients keep serving the old precached copies.
-const CACHE = "ammonomicon-v1";
+const CACHE = "ammonomicon-v2";
 
 const PRECACHE = [
   "/offline",
@@ -62,9 +62,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Build output is content-hashed, so it is safe to serve cache-first.
+  // Only content-hashed build output is safe to serve cache-first. The dev
+  // server's /_next/static/chunks/ URLs are path-based and mutable — caching
+  // them once poisoned every later dev session with stale code (v1 did this).
   const cacheable =
-    url.pathname.startsWith("/_next/static/") || PRECACHE.includes(url.pathname);
+    url.pathname.startsWith("/_next/static/immutable/") ||
+    url.pathname.startsWith("/_next/static/media/") ||
+    PRECACHE.includes(url.pathname);
   if (!cacheable) return;
 
   event.respondWith(
