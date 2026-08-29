@@ -24,9 +24,28 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Ammonomicon — Gungeon Run Companion",
+  metadataBase: new URL("https://gungeoncompanion.com"),
+  title: {
+    default: "Ammonomicon — Enter the Gungeon Run Companion",
+    template: "%s · Ammonomicon",
+  },
   description:
     "Track the guns and items of your current Enter the Gungeon run and discover synergies the moment you find them.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Ammonomicon",
+    title: "Ammonomicon — Enter the Gungeon Run Companion",
+    description:
+      "Track the guns and items of your current Enter the Gungeon run and discover synergies the moment you find them.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: "Ammonomicon — Enter the Gungeon Run Companion",
+    description:
+      "Track the guns and items of your current Enter the Gungeon run and discover synergies the moment you find them.",
+  },
   appleWebApp: {
     title: "Ammonomicon",
     // The layout already paints under the notch; keep the status bar transparent.

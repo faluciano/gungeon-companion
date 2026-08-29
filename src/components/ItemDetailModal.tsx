@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import Link from "next/link";
 import { computeItemDetail } from "@/lib/run-core";
 import {
   JUNKAN_RANKS,
@@ -106,6 +107,12 @@ export default function ItemDetailModal({
               >
                 {item.owned ? "− Remove from run" : "+ Add to run"}
               </button>
+              <Link
+                href={`/items/${item.id}`}
+                className="mt-2 block text-center text-xs text-ink-faint underline underline-offset-2 hover:text-ink"
+              >
+                Open the full {item.name} page ↗
+              </Link>
             </div>
 
             {item.id === SER_JUNKAN_ID && (

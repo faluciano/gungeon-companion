@@ -9,6 +9,7 @@ import InstallButton from "@/components/InstallButton";
 
 const NAV: { href: string; label: string }[] = [
   { href: "/", label: "Run" },
+  { href: "/items", label: "Items" },
   { href: "/shrines", label: "Shrines" },
 ];
 

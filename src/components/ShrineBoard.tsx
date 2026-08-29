@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { SHRINES, type Shrine } from "@/lib/data/shrines";
 
 function ShrineImage({ shrine }: { shrine: Shrine }) {
@@ -28,12 +29,16 @@ function ShrineImage({ shrine }: { shrine: Shrine }) {
 
 function ShrineCard({ shrine }: { shrine: Shrine }) {
   return (
-    <li className="panel flex flex-col p-4">
+    <li id={shrine.id} className="panel flex scroll-mt-20 flex-col p-4">
       <div className="flex items-start gap-3">
         <ShrineImage shrine={shrine} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-display text-lg font-semibold text-ink">{shrine.name}</h3>
+            <h3 className="font-display text-lg font-semibold text-ink">
+              <Link href={`/shrines/${shrine.id}`} className="hover:text-amber">
+                {shrine.name}
+              </Link>
+            </h3>
             {shrine.curse && (
               <span className="chip chip-ready shrink-0">{shrine.curse}</span>
             )}
@@ -85,11 +90,12 @@ export default function ShrineBoard() {
   return (
     <div className="space-y-5">
       <div className="panel p-4">
-        <p className="kicker mb-2">Ammonomicon // Shrines</p>
+        <h2 className="kicker mb-2">Enter the Gungeon // Shrines</h2>
         <p className="max-w-3xl text-sm leading-relaxed text-ink-dim">
           Shrines are statues scattered through the Gungeon that grant a boon —
           usually for a price. A green lantern by a door hints one waits inside.
-          Browse what each one does before you strike a bargain.
+          Browse all {SHRINES.length} shrines to see what each one does before
+          you strike a bargain.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button
