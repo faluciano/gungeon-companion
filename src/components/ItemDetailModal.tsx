@@ -201,6 +201,9 @@ export default function ItemDetailModal({
                                   : "border-line text-ink-faint"
                               }`}
                             >
+                              {g.minItems > 1 && (
+                                <span className="opacity-70">{g.minItems} of:</span>
+                              )}
                               {g.items.map((it, ii) => (
                                 <span key={it.id}>
                                   {ii > 0 && <span className="opacity-50"> / </span>}

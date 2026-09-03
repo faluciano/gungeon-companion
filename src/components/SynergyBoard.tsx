@@ -13,6 +13,8 @@ function SynergyRow({
   onOpenItem: (id: string) => void;
 }) {
   const active = synergy.status === "active";
+  // Usually one more pickup; Chief Master-style groups can need two at once.
+  const stillNeeded = Math.max(1, ...synergy.needed.map((g) => g.stillNeeded));
   return (
     <li
       className={`panel-inset p-4 ${active ? "border-l-2 border-l-teal" : "border-l-2 border-l-amber-deep"}`}
@@ -22,7 +24,7 @@ function SynergyRow({
         <span
           className={`chip shrink-0 ${active ? "chip-active" : "chip-ready"}`}
         >
-          {active ? "Active" : `Need 1 more`}
+          {active ? "Active" : `Need ${stillNeeded} more`}
         </span>
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-ink-dim">{synergy.effect}</p>
@@ -42,7 +44,9 @@ function SynergyRow({
         </div>
       ) : (
         <div className="mt-2.5">
-          <p className="kicker mb-1 text-[0.6rem]">Add one of</p>
+          <p className="kicker mb-1 text-[0.6rem]">
+            {stillNeeded > 1 ? `Add ${stillNeeded} of` : "Add one of"}
+          </p>
           <div className="flex flex-wrap gap-1.5">
             {synergy.needed.flatMap((g) =>
               g.options.map((o) => (

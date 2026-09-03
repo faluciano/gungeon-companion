@@ -8,9 +8,20 @@ export type SynergyEvaluation = {
   satisfiedGroups: number;
   // Groups still needed for the synergy to become active.
   missingGroups: SynergyGroup[];
-  // Owned items that currently contribute to this synergy.
+  // Owned items that currently contribute to this synergy (including partial
+  // progress on groups that need more than one member).
   ownedContributors: GameItem[];
 };
+
+/** Owned members of a group. */
+export function ownedInGroup(group: SynergyGroup, owned: ReadonlySet<string>): GameItem[] {
+  return group.items.filter((i) => owned.has(i.id));
+}
+
+/** Whether a group has enough owned members (any one, or `minItems` of them). */
+export function isGroupSatisfied(group: SynergyGroup, owned: ReadonlySet<string>): boolean {
+  return ownedInGroup(group, owned).length >= group.minItems;
+}
 
 /** Evaluate a single synergy against a set of owned item ids. */
 export function evaluateSynergy(
@@ -22,10 +33,10 @@ export function evaluateSynergy(
   const contributors: GameItem[] = [];
 
   for (const group of synergy.groups) {
-    const hit = group.items.filter((i) => owned.has(i.id));
-    if (hit.length > 0) {
+    const hit = ownedInGroup(group, owned);
+    contributors.push(...hit);
+    if (hit.length >= group.minItems) {
       satisfied.push(group);
-      contributors.push(...hit);
     } else {
       missing.push(group);
     }

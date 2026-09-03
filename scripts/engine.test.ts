@@ -25,8 +25,8 @@ const yesScope: ResolvedSynergy = {
   effect: "Spin buff.",
   requiredGroups: 2,
   groups: [
-    { index: 0, items: [scope] },
-    { index: 1, items: [awp, sniper] },
+    { index: 0, items: [scope], minItems: 1 },
+    { index: 1, items: [awp, sniper], minItems: 1 },
   ],
 };
 
@@ -37,9 +37,9 @@ const twoOf: ResolvedSynergy = {
   effect: "Boom.",
   requiredGroups: 2,
   groups: [
-    { index: 0, items: [bomb] },
-    { index: 1, items: [rocket] },
-    { index: 2, items: [scope] },
+    { index: 0, items: [bomb], minItems: 1 },
+    { index: 1, items: [rocket], minItems: 1 },
+    { index: 2, items: [scope], minItems: 1 },
   ],
 };
 
@@ -93,4 +93,58 @@ test("reportItemSynergies: already-active does not re-activate", () => {
   assert.equal(reports[0].alreadyOwned, true);
   assert.equal(reports[0].activatesOnAdd, false);
   assert.equal(reports[0].evaluation.status, "active");
+});
+
+// "Chief Master": Alien Sidearm AND any TWO Master Rounds — the second group
+// needs two distinct members owned at once, not just one.
+const sidearm = it("alien-sidearm", "Alien Sidearm");
+const mr1 = it("master-round-i", "Master Round I");
+const mr2 = it("master-round-ii", "Master Round II");
+const mr3 = it("master-round-iii", "Master Round III");
+const chiefMaster: ResolvedSynergy = {
+  id: "chief-master",
+  name: "Chief Master",
+  effect: "Auto Alien Sidearm.",
+  requiredGroups: 2,
+  groups: [
+    { index: 0, items: [sidearm], minItems: 1 },
+    { index: 1, items: [mr1, mr2, mr3], minItems: 2 },
+  ],
+};
+
+test("minItems group: one Master Round is not enough", () => {
+  const e = evaluateSynergy(chiefMaster, new Set(["alien-sidearm", "master-round-i"]));
+  assert.equal(e.status, "one_away");
+  assert.equal(e.satisfiedGroups, 1);
+  assert.deepEqual(e.missingGroups.map((g) => g.index), [1]);
+  // The held Master Round still counts as progress.
+  assert.deepEqual(e.ownedContributors.map((i) => i.id).sort(), [
+    "alien-sidearm",
+    "master-round-i",
+  ]);
+});
+
+test("minItems group: two Master Rounds activate", () => {
+  const e = evaluateSynergy(
+    chiefMaster,
+    new Set(["alien-sidearm", "master-round-i", "master-round-iii"]),
+  );
+  assert.equal(e.status, "active");
+  assert.equal(e.satisfiedGroups, 2);
+});
+
+test("minItems group: Master Rounds alone never activate", () => {
+  const e = evaluateSynergy(
+    chiefMaster,
+    new Set(["master-round-i", "master-round-ii", "master-round-iii"]),
+  );
+  assert.equal(e.status, "one_away");
+  assert.equal(e.satisfiedGroups, 1);
+});
+
+test("minItems group: activatesOnAdd for the second Master Round only", () => {
+  const withOne = new Set(["alien-sidearm", "master-round-i"]);
+  assert.equal(reportItemSynergies(mr2, [chiefMaster], withOne)[0].activatesOnAdd, true);
+  const withNone = new Set(["alien-sidearm"]);
+  assert.equal(reportItemSynergies(mr2, [chiefMaster], withNone)[0].activatesOnAdd, false);
 });
