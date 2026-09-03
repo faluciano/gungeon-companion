@@ -43,9 +43,9 @@ export default function Header({
               ⁂
             </span>
             <div className="hidden sm:block">
-              <h1 className="font-display text-lg font-bold leading-none tracking-wide text-ink">
+              <p className="font-display text-lg font-bold leading-none tracking-wide text-ink">
                 AMMONOMICON
-              </h1>
+              </p>
               <p className="mt-0.5 text-[0.62rem] uppercase tracking-[0.28em] text-ink-faint">
                 Gungeon Run Companion
               </p>

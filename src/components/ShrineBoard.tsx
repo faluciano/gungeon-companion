@@ -90,7 +90,7 @@ export default function ShrineBoard() {
   return (
     <div className="space-y-5">
       <div className="panel p-4">
-        <h2 className="kicker mb-2">Enter the Gungeon // Shrines</h2>
+        <h1 className="kicker mb-2">Enter the Gungeon // Shrines</h1>
         <p className="max-w-3xl text-sm leading-relaxed text-ink-dim">
           Shrines are statues scattered through the Gungeon that grant a boon —
           usually for a price. A green lantern by a door hints one waits inside.

@@ -6,6 +6,23 @@ import SiteFooter from "@/components/SiteFooter";
 import RunNudge from "@/components/RunNudge";
 import { SHRINES } from "@/lib/data/shrines";
 
+/** Wrap the flavor line in quotes unless it already carries its own. */
+function quoteFlavor(flavor: string) {
+  return /^["\u201c]/.test(flavor) ? flavor : `\u201c${flavor}\u201d`;
+}
+
+function breadcrumbJsonLd(shrine: { id: string; name: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ammonomicon", item: "https://gungeoncompanion.com/" },
+      { "@type": "ListItem", position: 2, name: "Shrines", item: "https://gungeoncompanion.com/shrines" },
+      { "@type": "ListItem", position: 3, name: shrine.name, item: `https://gungeoncompanion.com/shrines/${shrine.id}` },
+    ],
+  };
+}
+
 export function generateStaticParams() {
   return SHRINES.map((s) => ({ id: s.id }));
 }
@@ -18,9 +35,10 @@ export async function generateMetadata({
   const { id } = await params;
   const shrine = SHRINES.find((s) => s.id === id);
   if (!shrine) return {};
-  const title = `${shrine.name} — Enter the Gungeon Shrine Guide`;
-  // Lead with the in-game flavor line — it's what players actually search.
-  const description = `"${shrine.flavor}" What the ${shrine.name} does in Enter the Gungeon: ${shrine.effect}`.slice(0, 300);
+  // Players search the in-game flavor line verbatim, so it belongs in the
+  // title where Google bolds the match — not just in the description.
+  const title = `${shrine.name} — ${quoteFlavor(shrine.flavor)} · Enter the Gungeon`;
+  const description = `${quoteFlavor(shrine.flavor)} What the ${shrine.name} does in Enter the Gungeon: ${shrine.effect}`.slice(0, 300);
   return {
     title,
     description,
@@ -42,6 +60,10 @@ export default async function ShrinePage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd(shrine)) }}
+      />
       <SessionHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6">
         <nav className="mb-4 text-xs text-ink-faint">

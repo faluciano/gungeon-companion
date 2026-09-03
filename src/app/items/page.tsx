@@ -50,7 +50,7 @@ export default function ItemsPage() {
       <SessionHeader />
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-5 py-6">
         <div className="panel p-4">
-          <h2 className="kicker mb-2">Enter the Gungeon // Items</h2>
+          <h1 className="kicker mb-2">Enter the Gungeon // Items</h1>
           <p className="max-w-3xl text-sm leading-relaxed text-ink-dim">
             The full Ammonomicon: all {items.length} guns and items in Enter the
             Gungeon. Open any item to see what it does and every synergy it can

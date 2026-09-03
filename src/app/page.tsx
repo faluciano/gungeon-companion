@@ -11,11 +11,11 @@ export default function Home() {
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div className="rise">
             <p className="kicker mb-3">Enter the Gungeon · Companion</p>
-            <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
+            <h1 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
               Track your run.
               <br />
               <span className="text-amber">Reveal every synergy.</span>
-            </h2>
+            </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-ink-dim">
               Log the guns and items you pick up, and the Ammonomicon instantly
               surfaces which combos are <span className="text-teal">active</span>{" "}

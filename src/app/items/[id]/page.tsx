@@ -7,6 +7,18 @@ import RunNudge from "@/components/RunNudge";
 import { getGameData } from "@/lib/game-data";
 import { tierClass, tierLabel, typeGlyph, typeLabel } from "@/lib/ui";
 
+function breadcrumbJsonLd(item: { id: string; name: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Ammonomicon", item: "https://gungeoncompanion.com/" },
+      { "@type": "ListItem", position: 2, name: "Items", item: "https://gungeoncompanion.com/items" },
+      { "@type": "ListItem", position: 3, name: item.name, item: `https://gungeoncompanion.com/items/${item.id}` },
+    ],
+  };
+}
+
 export function generateStaticParams() {
   return getGameData().items.map((i) => ({ id: i.id }));
 }
@@ -47,6 +59,10 @@ export default async function ItemPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd(item)) }}
+      />
       <SessionHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6">
         <nav className="mb-4 text-xs text-ink-faint">
