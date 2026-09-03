@@ -90,6 +90,11 @@ the database stores only auth tables and per-run item ids. Rebuilding carries th
 existing item icon URLs over (they come from `scripts/resolve-images.mjs`, which needs
 network access), unescapes wiki HTML entities, and emits `groupMinimums` for synergy
 groups that need more than one member at once (Chief Master: any two Master Rounds).
+Guns also carry a `stats` block (fire mode, class, DPS, damage, fire rate, reload,
+magazine, ammo, shot speed, range, force, spread) from the wiki's Guns table; values
+are kept as display strings since many guns list per-form variants or ranges, and
+`src/lib/gun-stats.ts` parses the leading figure to rank each gun against the rest of
+the Ammonomicon on its item page.
 
 ## How search works
 
@@ -138,6 +143,8 @@ bunx tsx --test scripts/*.test.ts
   synergy matching, and ranking.
 - `scripts/engine.test.ts` — synergy evaluation (active / one-away / potential, OR-groups,
   two-of, groups that need several members at once, activates-on-add).
+- `scripts/gun-stats.test.ts` — gun stat parsing, unlimited-ammo flags, and per-stat
+  ranking on item pages.
 
 ---
 
