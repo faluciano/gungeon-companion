@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import SessionHeader from "@/components/SessionHeader";
 import SiteFooter from "@/components/SiteFooter";
 import RunNudge from "@/components/RunNudge";
+import { GunStatsPanel, ItemFacts } from "@/components/ItemStats";
 import { getGameData } from "@/lib/game-data";
+import { gunStatRows, statDisplay, STAT_DEFS } from "@/lib/gun-stats";
 import { tierClass, tierLabel, typeGlyph, typeLabel } from "@/lib/ui";
 
 function breadcrumbJsonLd(item: { id: string; name: string }) {
@@ -34,9 +36,22 @@ export async function generateMetadata({
   if (!item) return {};
   const synCount = synergiesByItem.get(id)?.length ?? 0;
   const title = `${item.name} — Enter the Gungeon ${typeLabel(item.type)} Guide`;
+  // Lead with the headline numbers for guns so search snippets answer
+  // "how much damage does X do" without a click.
+  const statLine = item.stats
+    ? STAT_DEFS.filter((d) => ["dps", "damage", "magazineSize", "ammoCapacity"].includes(d.key))
+        .map((d) => {
+          const v = statDisplay(d, item.stats!);
+          return v == null ? null : `${d.label} ${v}`;
+        })
+        .filter(Boolean)
+        .join(", ")
+    : "";
   const description = `${item.name} in Enter the Gungeon: ${item.description}${
-    synCount > 0 ? ` See all ${synCount} ${item.name} synergies.` : ""
-  }`.slice(0, 300);
+    statLine
+      ? ` ${item.stats!.fireMode === "Varies" ? "Multi-form" : item.stats!.fireMode} gun — ${statLine}.`
+      : ""
+  }${synCount > 0 ? ` See all ${synCount} ${item.name} synergies.` : ""}`.slice(0, 300);
   return {
     title,
     description,
@@ -51,11 +66,12 @@ export default async function ItemPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { itemsById, synergiesByItem } = getGameData();
+  const { items, itemsById, synergiesByItem } = getGameData();
   const item = itemsById.get(id);
   if (!item) notFound();
 
   const synergies = synergiesByItem.get(id) ?? [];
+  const statRows = gunStatRows(item, items);
 
   return (
     <>
@@ -109,7 +125,11 @@ export default async function ItemPage({
           <p className="mt-4 text-sm leading-relaxed text-ink-dim">
             {item.description}
           </p>
+
+          <ItemFacts item={item} synergyCount={synergies.length} />
         </article>
+
+        <GunStatsPanel item={item} rows={statRows} />
 
         <section className="mt-6">
           <h2 className="kicker mb-3">

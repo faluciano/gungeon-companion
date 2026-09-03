@@ -104,6 +104,60 @@ def quality(raw: str | None) -> str:
     return raw if raw in VALID_QUALITY else "N"
 
 
+# guns.csv column -> stats key. Values are kept as display strings because the
+# wiki lists per-form / per-charge variants ("Uncharged: 10 / Charged: 20") and
+# ranges ("34.6-69.2") that don't reduce to one number; the app parses the
+# leading number for its rank bars (src/lib/gun-stats.ts).
+GUN_STAT_COLUMNS = {
+    "dps": "dps",
+    "magazine size": "magazineSize",
+    "ammo capacity": "ammoCapacity",
+    "damage": "damage",
+    "fire rate": "fireRate",
+    "reload time": "reloadTime",
+    "shot speed": "shotSpeed",
+    "range": "range",
+    "force": "force",
+    "spread": "spread",
+}
+
+
+def stat_text(raw: str | None) -> str | None:
+    """Normalise a gun stat cell into one readable line.
+
+    The datamined CSV flattens the wiki's multi-line cells: line breaks become a
+    literal backslash-n, and some variants are simply mashed together
+    ("12 (pistol)20 (beam)", "Gun: 7Bullet: 4"). Split them back apart with a
+    middle dot so the app can show the cell verbatim.
+    """
+    raw = clean(raw)
+    if raw is None:
+        return None
+    text = raw.replace("\\n", " · ")
+    text = re.sub(r"\)\s*(?=[\dA-Za-z])", ") · ", text)  # "12 (pistol)20 (beam)"
+    text = re.sub(r"(\d)\s*(?=[A-Z][a-z]+:)", r"\1 · ", text)  # "Gun: 7Bullet: 4"
+    text = re.sub(r"\s*/\s*·\s*", " / ", text)  # "16.7/ · 46.2/ · 160.0"
+    text = re.sub(r"\s*·\s*", " · ", text)
+    text = re.sub(r"\s*/\s*(?!s\b)", " / ", text)  # keep "15/s" (per second)
+    return re.sub(r"  +", " ", text).strip(" ·")
+
+
+def gun_stats(row: dict) -> dict:
+    """Combat stats for a guns.csv row (wiki Guns table columns)."""
+    stats = {
+        # Wiki "Type": Automatic / Semiautomatic / Charged / Beam / Burst / Varies.
+        "fireMode": clean(row.get("type")) or "Varies",
+        # Internal gun class tag (PISTOL, SHOTGUN, BEAM, ...).
+        "gunClass": (clean(row.get("class")) or "NONE").upper(),
+    }
+    for column, key in GUN_STAT_COLUMNS.items():
+        stats[key] = stat_text(row.get(column))
+    # A blank ammo capacity is the wiki's {{Infinity}}: the gun never runs dry
+    # (Casey, Elimentaler, Gunther, Dueling Laser).
+    stats["infiniteAmmo"] = stats["ammoCapacity"] is None
+    return stats
+
+
 def load_existing_images() -> dict[str, str]:
     """imageUrl per item id from the previous dataset.json (if any)."""
     if not os.path.exists(OUT):
@@ -122,7 +176,7 @@ def main() -> None:
     name_to_id: dict[str, str] = {}
     existing_images = load_existing_images()
 
-    def add_item(name, type_, qual, description, quote):
+    def add_item(name, type_, qual, description, quote, stats=None):
         name = name.strip()
         qual = QUALITY_OVERRIDES.get(name, qual)
         description = clean_text(description)
@@ -144,6 +198,8 @@ def main() -> None:
         }
         if iid in existing_images:
             items[iid]["imageUrl"] = existing_images[iid]
+        if stats:
+            items[iid]["stats"] = stats
         name_to_id[name] = iid
         return iid
 
@@ -155,6 +211,7 @@ def main() -> None:
             quality(g.get("tier")),
             clean(g.get("notes")) or "",
             clean(g.get("quote")),
+            gun_stats(g),
         )
 
     # --- Items (passives / actives) ---

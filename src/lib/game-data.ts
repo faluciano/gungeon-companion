@@ -1,5 +1,33 @@
 import dataset from "@/lib/data/dataset.json";
 
+/**
+ * Combat stats for a gun, from the wiki's Guns table. Values are display
+ * strings because many guns list per-form or per-charge variants
+ * ("Uncharged: 10 · Charged: 20") or ranges ("34.6-69.2"); `null` means the
+ * wiki doesn't list that stat. See src/lib/gun-stats.ts for parsing/ranking.
+ */
+export type GunStats = {
+  /** Wiki "Type": Automatic, Semiautomatic, Charged, Beam, Burst, or Varies. */
+  fireMode: string;
+  /** Internal gun class tag (PISTOL, SHOTGUN, BEAM, SILLY, ...). */
+  gunClass: string;
+  dps: string | null;
+  magazineSize: string | null;
+  /** null when the gun has unlimited ammo (see `infiniteAmmo`). */
+  ammoCapacity: string | null;
+  damage: string | null;
+  /** Seconds between shots (lower fires faster). */
+  fireRate: string | null;
+  /** Seconds to reload. */
+  reloadTime: string | null;
+  shotSpeed: string | null;
+  range: string | null;
+  force: string | null;
+  /** Degrees of bullet deviation (lower is more accurate). */
+  spread: string | null;
+  infiniteAmmo: boolean;
+};
+
 export type GameItem = {
   id: string;
   name: string;
@@ -8,6 +36,8 @@ export type GameItem = {
   description: string;
   quote: string | null;
   imageUrl: string | null;
+  /** Present for every gun; absent for passives and actives. */
+  stats?: GunStats;
 };
 
 export type SynergyGroup = {
