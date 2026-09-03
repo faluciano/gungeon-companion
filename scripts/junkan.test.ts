@@ -3,10 +3,12 @@ import assert from "node:assert/strict";
 import {
   junkanStatus,
   JUNKAN_RANKS,
+  GLASS_GUON_STONE_ID,
   GOLD_JUNK_ID,
   JUNK_ID,
   LIES_ID,
   SER_JUNKAN_ID,
+  STACKABLE_IDS,
 } from "../src/lib/junkan";
 
 const owned = (...ids: string[]) => new Set(ids);
@@ -66,4 +68,14 @@ test("Gold Junk overrides everything with Mecha Junkan", () => {
   assert.equal(s?.current.rank, "Mecha Junkan");
   assert.equal(s?.mecha, true);
   assert.equal(s?.next, null);
+});
+
+test("Glass Guon Stone stacks; Junkan ignores it", () => {
+  assert.ok(STACKABLE_IDS.has(GLASS_GUON_STONE_ID));
+  const s = junkanStatus(
+    owned(SER_JUNKAN_ID, JUNK_ID, GLASS_GUON_STONE_ID),
+    qty([[GLASS_GUON_STONE_ID, 3]]),
+  );
+  assert.equal(s?.junkCount, 1);
+  assert.equal(s?.current.rank, "Squire");
 });

@@ -1,7 +1,9 @@
 import { getGameData, type GameItem } from "@/lib/game-data";
 import {
   activeSynergies,
+  isGroupSatisfied,
   nearlyActiveSynergies,
+  ownedInGroup,
   reportItemSynergies,
   type SynergyEvaluation,
 } from "@/lib/synergy/engine";
@@ -18,7 +20,7 @@ import type {
 // same on the server (initial render) and in the browser (live updates), so
 // search and synergy evaluation never need a network round-trip.
 
-function toView(e: SynergyEvaluation): SynergyEvaluationView {
+function toView(e: SynergyEvaluation, owned: ReadonlySet<string>): SynergyEvaluationView {
   return {
     id: e.synergy.id,
     name: e.synergy.name,
@@ -34,12 +36,15 @@ function toView(e: SynergyEvaluation): SynergyEvaluationView {
     })),
     needed: e.missingGroups.map((g) => ({
       groupIndex: g.index,
-      options: g.items.map((i) => ({
-        id: i.id,
-        name: i.name,
-        quality: i.quality,
-        imageUrl: i.imageUrl,
-      })),
+      stillNeeded: Math.max(1, g.minItems - ownedInGroup(g, owned).length),
+      options: g.items
+        .filter((i) => !owned.has(i.id))
+        .map((i) => ({
+          id: i.id,
+          name: i.name,
+          quality: i.quality,
+          imageUrl: i.imageUrl,
+        })),
     })),
   };
 }
@@ -81,11 +86,11 @@ export function computeRunView(
 
   const active = activeSynergies(relevantSynergies, owned)
     .sort((a, b) => a.synergy.name.localeCompare(b.synergy.name))
-    .map(toView);
+    .map((e) => toView(e, owned));
 
   const nearly = nearlyActiveSynergies(relevantSynergies, owned)
     .sort((a, b) => a.synergy.name.localeCompare(b.synergy.name))
-    .map(toView);
+    .map((e) => toView(e, owned));
 
   return {
     runId,
@@ -175,7 +180,8 @@ export function computeItemDetail(
       satisfiedGroups: r.evaluation.satisfiedGroups,
       groups: r.evaluation.synergy.groups.map((g) => ({
         index: g.index,
-        satisfied: g.items.some((i) => ownedIds.has(i.id)),
+        satisfied: isGroupSatisfied(g, ownedIds),
+        minItems: g.minItems,
         items: g.items.map((i) => ({
           id: i.id,
           name: i.name,

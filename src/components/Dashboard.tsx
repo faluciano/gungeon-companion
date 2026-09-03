@@ -22,7 +22,7 @@ export default function Dashboard({
   runId: string;
   runName: string;
   initialItemIds: string[];
-  /** itemId -> owned count for stackable items (Junk family). */
+  /** itemId -> owned count for stackable items (Junk family, Glass Guon Stone). */
   initialQuantities?: Record<string, number>;
   /** Guest runs persist to localStorage on this device instead of the server. */
   guest?: boolean;

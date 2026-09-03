@@ -25,6 +25,9 @@ export type SynergyEvaluationView = {
   contributors: { id: string; name: string; quality: Quality; imageUrl: string | null }[];
   needed: {
     groupIndex: number;
+    /** How many more of `options` must be picked up to satisfy this group. */
+    stillNeeded: number;
+    /** Members not yet owned. */
     options: { id: string; name: string; quality: Quality; imageUrl: string | null }[];
   }[];
 };
@@ -60,6 +63,8 @@ export type ItemDetailSynergy = {
   groups: {
     index: number;
     satisfied: boolean;
+    /** Members that must be owned at once (1 = any one of them). */
+    minItems: number;
     items: { id: string; name: string; type: ItemType; quality: Quality; owned: boolean }[];
   }[];
 };

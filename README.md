@@ -86,7 +86,10 @@ serverless):
 The dataset is bundled at `src/lib/data/dataset.json`. It is built by
 `scripts/build-dataset.py` (run with `uv run scripts/build-dataset.py`) from the raw
 datamined CSV/JSON in `scripts/raw/`. The app reads it directly (server and client);
-the database stores only auth tables and per-run item ids.
+the database stores only auth tables and per-run item ids. Rebuilding carries the
+existing item icon URLs over (they come from `scripts/resolve-images.mjs`, which needs
+network access), unescapes wiki HTML entities, and emits `groupMinimums` for synergy
+groups that need more than one member at once (Chief Master: any two Master Rounds).
 
 ## How search works
 
@@ -134,7 +137,7 @@ bunx tsx --test scripts/*.test.ts
 - `scripts/search.test.ts` — punctuation, acronyms, typos, multi-word, quote/description/
   synergy matching, and ranking.
 - `scripts/engine.test.ts` — synergy evaluation (active / one-away / potential, OR-groups,
-  two-of, activates-on-add).
+  two-of, groups that need several members at once, activates-on-add).
 
 ---
 

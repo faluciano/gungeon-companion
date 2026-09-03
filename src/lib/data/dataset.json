@@ -528,7 +528,7 @@
       "type": "gun",
       "quality": "B",
       "description": "Charms enemies when fully charged.",
-      "quote": "&lt;3-----&lt;&lt;&lt;",
+      "quote": "<3-----<<<",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/a/a5/Charmed_Bow.png/revision/latest"
     },
     {
@@ -564,7 +564,7 @@
       "type": "gun",
       "quality": "C",
       "description": "Reloading alternates between triple bolts and single bolts that slow enemies.",
-      "quote": "3 &gt; 1",
+      "quote": "3 > 1",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/2/24/Triple_Crossbow.png/revision/latest"
     },
     {
@@ -3020,7 +3020,7 @@
       "name": "Silver Bullets",
       "type": "passive",
       "quality": "C",
-      "description": "Increases damage to&#160;jammed&#160;enemies by 225% and Increases damage to&#160;bosses&#160;by 25%.",
+      "description": "Increases damage to jammed enemies by 225% and Increases damage to bosses by 25%.",
       "quote": "Blessed Metal",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/c/c3/Silver_Bullets.png/revision/latest"
     },
@@ -3902,7 +3902,7 @@
       "name": "Seven-Leaf Clover",
       "type": "passive",
       "quality": "S",
-      "description": "Increases the quality of&#160;chests&#160;found in chest rooms to an equal chance of red or black.",
+      "description": "Increases the quality of chests found in chest rooms to an equal chance of red or black.",
       "quote": "Lucky!",
       "imageUrl": "https://static.wikia.nocookie.net/enterthegungeon_gamepedia/images/3/37/Seven-Leaf_Clover.png/revision/latest"
     },
@@ -5695,11 +5695,37 @@
       "id": "chief-master",
       "name": "Chief Master",
       "effect": "Alien Sidearm has a much larger magazine and cannot be charged, but becomes fully automatic and the final two shots in the magazine are fully-charged shots.",
-      "requiredGroups": 1,
+      "requiredGroups": 2,
       "components": [
         {
           "itemId": "alien-sidearm",
           "groupIndex": 0
+        },
+        {
+          "itemId": "master-round-i",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "master-round-ii",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "master-round-iii",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "master-round-iv",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "master-round-v",
+          "groupIndex": 1
+        }
+      ],
+      "groupMinimums": [
+        {
+          "groupIndex": 1,
+          "minItems": 2
         }
       ]
     },
@@ -10058,7 +10084,7 @@
     {
       "id": "resourceful-indeed",
       "name": "Resourceful Indeed",
-      "effect": "Player becomes the&#160;Resourceful Rat. This prevents items from being stolen when they're left behind in rooms.",
+      "effect": "Player becomes the Resourceful Rat. This prevents items from being stolen when they're left behind in rooms.",
       "requiredGroups": 4,
       "components": [
         {
@@ -10876,6 +10902,30 @@
       ]
     },
     {
+      "id": "super-serum",
+      "name": "Super Serum",
+      "effect": "Increases the magazine size of the guns by 50%, increases the size of their projectiles, and allows them to bounce once.",
+      "requiredGroups": 4,
+      "components": [
+        {
+          "itemId": "plague-pistol",
+          "groupIndex": 0
+        },
+        {
+          "itemId": "plunger",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "gas-mask",
+          "groupIndex": 2
+        },
+        {
+          "itemId": "hazmat-suit",
+          "groupIndex": 3
+        }
+      ]
+    },
+    {
       "id": "super-space-turtle-dx",
       "name": "Super Space Turtle DX",
       "effect": "Super Space Turtle becomes jammed, firing piercing shots with higher damage.",
@@ -11612,6 +11662,30 @@
         {
           "itemId": "knight-s-gun",
           "groupIndex": 1
+        }
+      ]
+    },
+    {
+      "id": "unbelievably-charming",
+      "name": "Unbelievably Charming",
+      "effect": "While holding either the Charmed Bow or Shotgun Full of Love, all shots fired by the player (even shots fired via items other than either gun) and any companions are guaranteed to charm enemies. In addition, the player is followed by a fairy that blocks bullets and displays the contents of chests.",
+      "requiredGroups": 4,
+      "components": [
+        {
+          "itemId": "shotgun-full-of-love",
+          "groupIndex": 0
+        },
+        {
+          "itemId": "charmed-bow",
+          "groupIndex": 1
+        },
+        {
+          "itemId": "charming-rounds",
+          "groupIndex": 2
+        },
+        {
+          "itemId": "pink-guon-stone",
+          "groupIndex": 3
         }
       ]
     },

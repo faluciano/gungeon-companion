@@ -6,9 +6,14 @@ export const SER_JUNKAN_ID = "ser-junkan";
 export const JUNK_ID = "junk";
 export const GOLD_JUNK_ID = "gold-junk";
 export const LIES_ID = "lies";
+export const GLASS_GUON_STONE_ID = "glass-guon-stone";
 
-/** Items that stack in a run (each pickup counts, unlike the Set-like rest). */
-export const STACKABLE_IDS = new Set([JUNK_ID, GOLD_JUNK_ID, LIES_ID]);
+/**
+ * Items that stack in a run (each pickup counts, unlike the Set-like rest):
+ * the Junk family that levels Ser Junkan, and Glass Guon Stone, which the
+ * Gungeon hands out several at a time (shrines, chests) and orbits as a stack.
+ */
+export const STACKABLE_IDS = new Set([JUNK_ID, GOLD_JUNK_ID, LIES_ID, GLASS_GUON_STONE_ID]);
 
 export type JunkanRank = {
   /** Junk count at which this rank is reached. */

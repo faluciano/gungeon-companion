@@ -12,8 +12,11 @@ export type GameItem = {
 
 export type SynergyGroup = {
   index: number;
-  // Interchangeable alternatives; the group is satisfied if any is owned.
+  // Interchangeable alternatives; the group is satisfied once `minItems` of
+  // them are owned (1 for almost every group; Chief Master needs any two
+  // Master Rounds).
   items: GameItem[];
+  minItems: number;
 };
 
 export type ResolvedSynergy = {
@@ -42,6 +45,8 @@ type DatasetSynergy = {
   effect: string;
   requiredGroups: number;
   components: DatasetSynergyComponent[];
+  // Only present for groups that need more than one member owned.
+  groupMinimums?: { groupIndex: number; minItems: number }[];
 };
 type Dataset = { items: GameItem[]; synergies: DatasetSynergy[] };
 
@@ -62,9 +67,16 @@ function build(): GameData {
       arr.push(it);
       groupMap.set(c.groupIndex, arr);
     }
+    const minimums = new Map(
+      (s.groupMinimums ?? []).map((m) => [m.groupIndex, m.minItems]),
+    );
     const groups: SynergyGroup[] = [...groupMap.entries()]
       .sort((a, b) => a[0] - b[0])
-      .map(([index, groupItems]) => ({ index, items: groupItems }));
+      .map(([index, groupItems]) => ({
+        index,
+        items: groupItems,
+        minItems: Math.max(1, minimums.get(index) ?? 1),
+      }));
     return {
       id: s.id,
       name: s.name,
