@@ -12,9 +12,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.7.2",
+    "@better-auth/passkey": "^1.7.3",
     "@vercel/analytics": "^2.0.1",
-    "better-auth": "^1.7.2",
+    "better-auth": "^1.7.3",
     "drizzle-orm": "^0.45.2",
     "next": "16.3.4",
     "pg": "^8.23.0",
