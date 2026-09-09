@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import PwaSetup from "@/components/PwaSetup";
 import "./globals.css";
 
@@ -70,6 +71,7 @@ export default function RootLayout({
         <div className="relative z-10 flex min-h-full flex-col">{children}</div>
         <PwaSetup />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
