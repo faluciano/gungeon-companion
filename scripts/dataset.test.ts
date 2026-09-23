@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { getGameData } from "../src/lib/game-data";
 import { computeRunView, computeItemDetail } from "../src/lib/run-core";
+import { ITEM_GUIDES } from "../src/lib/data/item-guides";
 
 // Guards on the generated dataset (scripts/build-dataset.py) and how the app
 // derives views from it. These catch regressions in the build script that the
@@ -77,4 +78,20 @@ test("no HTML entities leak into display text", () => {
     silver?.description,
     "Increases damage to jammed enemies by 225% and Increases damage to bosses by 25%.",
   );
+});
+
+test("Briefcase of Cash grants money and Hegemony Credits, not keys", () => {
+  assert.equal(
+    data.itemsById.get("briefcase-of-cash")?.description,
+    "Grants 250 money and 3 Hegemony Credits.",
+  );
+});
+
+test("item guides only reference items in the dataset", () => {
+  for (const [id, guide] of Object.entries(ITEM_GUIDES)) {
+    assert.ok(data.itemsById.has(id), `guide for unknown item ${id}`);
+    for (const rid of guide.related ?? []) {
+      assert.ok(data.itemsById.has(rid), `${id} links unknown item ${rid}`);
+    }
+  }
 });

@@ -12,6 +12,8 @@ import {
 import { statusChipClass, statusLabel, typeGlyph, typeLabel } from "@/lib/ui";
 import TierBadge from "./TierBadge";
 import ItemIcon from "./ItemIcon";
+import ItemGuide from "./ItemGuide";
+import { getItemGuide } from "@/lib/data/item-guides";
 
 export default function ItemDetailModal({
   itemId,
@@ -38,6 +40,7 @@ export default function ItemDetailModal({
   }, [onClose]);
 
   const item = detail?.item;
+  const guide = getItemGuide(itemId);
 
   return (
     <div
@@ -96,6 +99,7 @@ export default function ItemDetailModal({
                 “{item.quote}”
               </p>
             )}
+            {guide && <ItemGuide guide={guide} compact />}
 
             <div className="mt-5">
               <button

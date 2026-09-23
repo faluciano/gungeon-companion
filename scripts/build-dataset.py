@@ -28,7 +28,7 @@ SPRITE_FIXUPS = {
     "Increases the chance to find  shells upon completing rooms.":
         "Increases the chance to find shells upon completing rooms.",
     "Grants 500  on pickup.": "Grants 500 money on pickup.",
-    "Grants 250  and 3 .": "Grants 250 money and 3 keys.",
+    "Grants 250  and 3 .": "Grants 250 money and 3 Hegemony Credits.",
     # Synergy effects (synergies.v3.json)
     "Lil' Bomber's bombs become gold and spawn  every time they hit an enemy.":
         "Lil' Bomber's bombs become gold and spawn money every time they hit an enemy.",

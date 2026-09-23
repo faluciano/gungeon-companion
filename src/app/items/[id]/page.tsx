@@ -5,6 +5,8 @@ import SessionHeader from "@/components/SessionHeader";
 import SiteFooter from "@/components/SiteFooter";
 import RunNudge from "@/components/RunNudge";
 import { GunStatsPanel, ItemFacts } from "@/components/ItemStats";
+import ItemGuide from "@/components/ItemGuide";
+import { getItemGuide } from "@/lib/data/item-guides";
 import { getGameData } from "@/lib/game-data";
 import { gunStatRows, statDisplay, STAT_DEFS } from "@/lib/gun-stats";
 import { tierClass, tierLabel, typeGlyph, typeLabel } from "@/lib/ui";
@@ -72,6 +74,10 @@ export default async function ItemPage({
 
   const synergies = synergiesByItem.get(id) ?? [];
   const statRows = gunStatRows(item, items);
+  const guide = getItemGuide(id);
+  const guideRelated = (guide?.related ?? [])
+    .map((rid) => itemsById.get(rid))
+    .filter((r) => r != null);
 
   return (
     <>
@@ -128,6 +134,8 @@ export default async function ItemPage({
 
           <ItemFacts item={item} synergyCount={synergies.length} />
         </article>
+
+        {guide && <ItemGuide guide={guide} related={guideRelated} />}
 
         <GunStatsPanel item={item} rows={statRows} />
 
