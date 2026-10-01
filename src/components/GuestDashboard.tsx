@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import Dashboard from "./Dashboard";
+import DashboardPlaceholder from "./DashboardPlaceholder";
 import {
   GUEST_RUN_ID,
   GUEST_RUN_NAME,
@@ -35,11 +36,7 @@ export default function GuestDashboard() {
   const state = useSyncExternalStore(subscribe, getSnapshot, () => null);
 
   if (state === null) {
-    return (
-      <div className="grid min-h-[24rem] place-items-center text-xs uppercase tracking-[0.28em] text-ink-faint">
-        Opening the Ammonomicon…
-      </div>
-    );
+    return <DashboardPlaceholder />;
   }
 
   // No guest banner — guest is the default experience, and the header's

@@ -11,6 +11,39 @@ interface BeforeInstallPromptEvent extends Event {
 
 type Listener = () => void;
 
+/** Where an install was started from, so the funnel can compare entry points. */
+export type InstallSource = "header" | "banner";
+
+type AnalyticsWindow = Window & {
+  va?: (...params: unknown[]) => void;
+  vaq?: unknown[][];
+};
+
+/**
+ * `track()` is a silent no-op until `<Analytics />` has created `window.va`,
+ * which happens in an effect inside a Suspense boundary — after PwaSetup's
+ * effect and possibly after `beforeinstallprompt`. Creating the same queue
+ * stub Vercel's script snippet uses buffers the event until the script loads.
+ */
+function trackEvent(...args: Parameters<typeof track>) {
+  const w = window as AnalyticsWindow;
+  w.va ??= (...params) => {
+    (w.vaq ??= []).push(params);
+  };
+  track(...args);
+}
+
+/** Runs `fn` once per tab session; storage failures just mean it may repeat. */
+function oncePerSession(key: string, fn: () => void) {
+  try {
+    if (sessionStorage.getItem(key)) return;
+    sessionStorage.setItem(key, "1");
+  } catch {
+    // Private mode or storage disabled — repeating the event is harmless.
+  }
+  fn();
+}
+
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 const listeners = new Set<Listener>();
 
@@ -69,7 +102,7 @@ export function manualInstallPlatform(): "ios" | "macos" | null {
  * Opens the browser's install dialog and reports the user's choice.
  * Resolves to the outcome, or null when no prompt was available.
  */
-export async function promptInstall() {
+export async function promptInstall(source: InstallSource) {
   const event = deferredPrompt;
   if (!event) return null;
 
@@ -79,8 +112,16 @@ export async function promptInstall() {
 
   await event.prompt();
   const { outcome } = await event.userChoice;
-  track("pwa_install_prompt", { outcome });
+  trackEvent("pwa_install_prompt", { outcome, source });
   return outcome;
+}
+
+/**
+ * Safari has no prompt, so opening the manual instructions is the closest
+ * thing to an install attempt we can measure there.
+ */
+export function trackInstallHint(platform: "ios" | "macos", source: InstallSource) {
+  trackEvent("pwa_install_hint", { platform, source });
 }
 
 /**
@@ -89,13 +130,9 @@ export async function promptInstall() {
  */
 export function trackStandaloneLaunch() {
   if (!isStandalone()) return;
-  try {
-    if (sessionStorage.getItem("pwa-launch-tracked")) return;
-    sessionStorage.setItem("pwa-launch-tracked", "1");
-  } catch {
-    // Private mode or storage disabled — tracking the launch again is harmless.
-  }
-  track("pwa_launch", { platform: isIOS() ? "ios" : "other" });
+  oncePerSession("pwa-launch-tracked", () =>
+    trackEvent("pwa_launch", { platform: isIOS() ? "ios" : "other" }),
+  );
 }
 
 if (typeof window !== "undefined") {
@@ -106,12 +143,15 @@ if (typeof window !== "undefined") {
     event.preventDefault();
     deferredPrompt = event as BeforeInstallPromptEvent;
     emit();
-    track("pwa_install_available");
+    // Chromium refires this on every full page load; count sessions, not loads.
+    oncePerSession("pwa-install-available-tracked", () =>
+      trackEvent("pwa_install_available"),
+    );
   });
 
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
     emit();
-    track("pwa_installed", { platform: isIOS() ? "ios" : "other" });
+    trackEvent("pwa_installed", { platform: isIOS() ? "ios" : "other" });
   });
 }

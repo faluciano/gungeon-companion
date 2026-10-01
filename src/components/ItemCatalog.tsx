@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { startTransition, useDeferredValue, useState } from "react";
 import Link from "next/link";
 import { getGameData, type GameItem } from "@/lib/game-data";
 import { searchItems } from "@/lib/search";
@@ -41,7 +41,11 @@ function Sprite({ item }: { item: GameItem }) {
 
 function ItemCard({ item, synergyCount }: { item: GameItem; synergyCount: number }) {
   return (
-    <li>
+    // Off-screen cards skip layout and paint until scrolled near; `auto`
+    // remembers the real size once seen. content-visibility clips paint to
+    // the <li>, so pad it (and cancel the padding in layout with a negative
+    // margin) to leave room for the panel's 6px offset shadow.
+    <li className="-mb-1.5 -mr-1.5 pb-1.5 pr-1.5 [contain-intrinsic-size:auto_54px] [content-visibility:auto]">
       <Link
         href={`/items/${item.id}`}
         className="panel flex items-center gap-3 px-3 py-2 transition-colors hover:border-line-bright"
@@ -104,7 +108,9 @@ export default function ItemCatalog() {
           {TYPE_FILTERS.map((f) => (
             <button
               key={f.value}
-              onClick={() => setType(f.value)}
+              // Switching the filter re-renders hundreds of cards; keep the
+              // click responsive and let the grid catch up.
+              onClick={() => startTransition(() => setType(f.value))}
               className={`btn px-3 py-1 text-xs ${type === f.value ? "btn-primary" : "btn-ghost"}`}
             >
               {f.label}

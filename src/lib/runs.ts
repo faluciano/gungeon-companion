@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { db } from "@/lib/db";
 import { run, runItem } from "@/lib/db/schema";
@@ -16,14 +16,21 @@ export type RunSummary = {
 
 /** Get the user's active run, creating a default one if none exists. */
 export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> {
-  const existing = await db
-    .select()
+  // One round trip: the newest active run joined to its items. A run with no
+  // items still comes back as a single row with a null item.
+  const latestActive = db
+    .select({ id: run.id })
     .from(run)
     .where(and(eq(run.userId, userId), eq(run.active, true)))
     .orderBy(desc(run.createdAt))
     .limit(1);
+  const rows = await db
+    .select({ run, itemId: runItem.itemId, quantity: runItem.quantity })
+    .from(run)
+    .leftJoin(runItem, eq(runItem.runId, run.id))
+    .where(inArray(run.id, latestActive));
 
-  let current = existing[0];
+  let current = rows[0]?.run;
   if (!current) {
     const inserted = await db
       .insert(run)
@@ -32,10 +39,11 @@ export async function getOrCreateActiveRun(userId: string): Promise<RunSummary> 
     current = inserted[0];
   }
 
-  const items = await db
-    .select({ itemId: runItem.itemId, quantity: runItem.quantity })
-    .from(runItem)
-    .where(eq(runItem.runId, current.id));
+  const items = rows.flatMap((r) =>
+    r.itemId === null || r.quantity === null
+      ? []
+      : [{ itemId: r.itemId, quantity: r.quantity }],
+  );
 
   return {
     id: current.id,
